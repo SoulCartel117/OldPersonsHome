@@ -1,5 +1,19 @@
+*{
+    margin: none;
+    padding: none;
+    box-sizing: border-box;
+}
 .header{
     width: 100%;
-    height: 50px;
+    height: 150px;
     border: 2px solid black;
+}
+.footer{
+    width: 100%;
+    height: 150px;
+    border: 2px solid red;
+}
+.main{
+    height: 650px;
+    width: 100%;
 }
