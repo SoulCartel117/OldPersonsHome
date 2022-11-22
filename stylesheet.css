@@ -17,3 +17,34 @@
     height: 650px;
     width: 100%;
 }
+.homeTitle{
+    text-align: center;
+    font-size: 50px;
+    margin-top: 3%;
+}
+.loginLink{
+    text-decoration: none;
+    cursor: pointer;
+    margin-left: 45%;
+    margin-top: 15%;
+    line-height: 10;
+    background-color: green;
+    color: white;
+    padding: 20px 50px;
+    font-size: 25px;
+}
+.registerLink{
+    text-decoration: none;
+    cursor: pointer;
+    margin-left: 45%;
+    margin-top: 15%;
+    line-height: 0;
+    background-color: green;
+    color: white;
+    padding: 20px 50px;
+    font-size: 25px;
+}
+.homepageLink{
+    flex-direction: column;
+    display: flex;
+}
