@@ -43,7 +43,7 @@ Route::get('/roster', function () {
 
 Route::get('/newRoster', function () {
     return view('newRoster');
-});
+}); 
 
 Route::get('/doctorHome', function () {
     return view('doctorHome');
