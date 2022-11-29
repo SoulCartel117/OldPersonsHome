@@ -1,0 +1,53 @@
+h1 {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.dateDiv{
+    display: flex;
+    justify-content: center;
+}
+
+label {
+    display: inline-block;
+    padding-top: 5px;
+    width: 145px;
+    border: 2px solid #1982ff;
+    text-align: center;
+    background-color: #1982ff;
+    color: white;
+    border-radius: 0 8px 0 0;
+}
+
+.dateDiv input{
+    margin-left: 5px;
+    border: 6px solid #1982ff;
+}
+
+.dateDiv p{
+    display: inline-block;
+    padding-top: 5px;
+    width: 145px;
+    border: 2px solid green;
+    text-align: center;
+    background-color: green;
+    color: white;
+    border-radius: 0 8px 0 0;
+}
+
+td {
+    text-align: center;
+}
+
+td input {
+    width: 100%;
+}
+.patientInfo th {
+    background-color: rgb(199, 199, 199);
+}
+
+.bottom {
+    display: flex;
+    justify-content: center
+}
