@@ -38,7 +38,7 @@ Route::get('/patients', function () {
 });
 
 Route::get('/roster', function () {
-    return view('roster');
+    return view('roster'); 
 });
 
 Route::get('/newRoster', function () {
