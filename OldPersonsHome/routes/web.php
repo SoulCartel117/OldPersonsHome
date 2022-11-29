@@ -68,3 +68,24 @@ Route::get('/adminReport', function () {
 Route::get('/payment', function () {
     return view('payment');
 });
+
+Route::get('/homepage', function () {
+    return view('homepage');
+});
+
+Route::get('/registration', function () {
+    return view('registration');
+});
+
+Route::get('/roles', function () {
+    return view('roles');
+});
+
+Route::get('/login', function () {
+    return view('login');
+});
+
+Route::get('/regisApproval', function () {
+    return view('regisApproval');
+});
+
