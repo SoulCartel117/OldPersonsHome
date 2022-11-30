@@ -17,6 +17,29 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/adminIndex', function () {
+    return view('adminIndex');
+});
+
+Route::get('/superIndex', function () {
+    return view('superIndex');
+});
+
+Route::get('/docIndex', function () {
+    return view('docIndex');
+});
+
+Route::get('/careIndex', function () {
+    return view('careIndex');
+});
+
+Route::get('/patientIndex', function () {
+    return view('patientIndex');
+
+});Route::get('/famIndex', function () {
+    return view('famIndex');
+});
+
 Route::get('/patientAdditionalInfo', function () {
     return view('patientAdditionalInfo');
 });
