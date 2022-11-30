@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,6 +100,8 @@ Route::get('/homepage', function () {
 Route::get('/registration', function () {
     return view('registration');
 });
+
+Route::post('/registration', [MainController::class, 'registration']);
 
 Route::get('/roles', function () {
     return view('roles');
