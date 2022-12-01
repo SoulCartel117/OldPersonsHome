@@ -16,12 +16,12 @@
                             <div class="infoBoxes">
                             <p style="width: 100px;">Role:</p>
                             <select name="role" id="role" style="width: 100px;">
-                                <option value="1">Doctor</option>
-                                <option value="2">Caregiver</option>
-                                <option value="3">Patient</option>
-                                <option value="4">Family</option>
-                                <option value="5">Admin</option>
-                                <option value="6">Supervisor</option>
+                                <option value="1">Admin</option>
+                                <option value="2">Supervisor</option>
+                                <option value="3">Doctor</option>
+                                <option value="4">Caregiver</option>
+                                <option value="5">Patient</option>
+                                <option value="6">Family</option>
                             </select>
                             </div>
                             <div class="infoBoxes">
