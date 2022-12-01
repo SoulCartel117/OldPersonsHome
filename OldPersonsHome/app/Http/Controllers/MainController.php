@@ -15,10 +15,6 @@ class MainController extends Controller
         return view('welcome');
     }
 
-    public function getRegistration(){
-        return view('registration');
-    }
-
     public function login(){
         return view('login', ['loginError'=>'Please log in']);
 
@@ -145,15 +141,16 @@ class MainController extends Controller
         $user = DB::table('accounts')->where
             ('Email', $request->input('email'))->first();
 
-        DB::table('familycode')->insert([
-            'patientID'=>$user->ID,
-            'familyCode' => $request->input('familyCode')
-        ]);
-
-        $FCID = DB::table('familycode')->where
-        ('patientID', $user->ID)->first();
         
         if($request->input('role') == 5){
+            DB::table('familycode')->insert([
+                'patientID'=>$user->ID,
+                'familyCode' => $request->input('familyCode')
+            ]);
+    
+            $FCID = DB::table('familycode')->where
+            ('patientID', $user->ID)->first();
+
             DB::table('patient')->insert([
                 'patientID'=>$user->ID,
                 'FCID' => $FCID->FCID,
