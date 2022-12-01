@@ -51,25 +51,25 @@
                             <div class="infoBoxes">
                                 <input type="submit" value="submit">
                             </div>
-                        </form>
+                        
                     </div>
                     <div class="rightFlex">
-                        <form action="">
+                        
                             <div class="infoBoxes">
                                 <p style="width: 100px;">Family Code</p>
-                                <input type="number">
+                                <input type="number" name="familyCode">
                             </div>
                             <div class="infoBoxes">
                                 <p style="width: 100px;">Emergency Contact Name</p>
-                                <input type="text">
+                                <input type="text" name="familyName">
                             </div>
                             <div class="infoBoxes">
                                 <p style="width: 100px;">Relation to Emergency Contact</p>
-                                <input type="text">
+                                <input type="text" name="familyRelation">
                             </div>
                             <div class="infoBoxes">
                                 <p style="width: 100px;">Emergency Contact Phone</p>
-                                <input type="number">
+                                <input type="number" name="familyPhone">
                             </div>
                             
                         </form>
@@ -79,6 +79,14 @@
                 
 
 
+            </div>
+            <div>
+                <script>
+                    function goBack() {
+                      window.history.back();
+                    }
+                    </script>
+                <button onclick="goBack()">Go Back</button>
             </div>
             <footer class="footer">
 

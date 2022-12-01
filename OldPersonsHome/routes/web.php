@@ -53,6 +53,15 @@ Route::get('/login', [MainController::class, 'getLogin']);
 
 Route::get('/regisApproval', [MainController::class, 'getRegisApproval']);
 
+Route::get('/adminIndex', [MainController::class, 'adminIndex']);
 
+Route::get('/superIndex', [MainController::class, 'superIndex']);
 
+Route::get('/docIndex', [MainController::class, 'docIndex']);
+
+Route::get('/careIndex', [MainController::class, 'careIndex']);
+
+Route::get('/patientHome', [MainController::class, 'patientIndex']);
+
+Route::get('/familyMemberHome', [MainController::class, 'famIndex']);
 

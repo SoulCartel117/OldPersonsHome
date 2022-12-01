@@ -41,6 +41,14 @@
                     <input class="okSubmit" type="submit" id="11" name="ok" value="OK">
                     <input class="cancelSubmit" type="submit" id="12" name="cancel" value="Cancel">
                 </form>
+                <div>
+                    <script>
+                        function goBack() {
+                          window.history.back();
+                        }
+                        </script>
+                    <button onclick="goBack()">Go Back</button>
+                </div>
             </div>
             <footer class="footer">
 
