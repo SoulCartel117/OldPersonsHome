@@ -87,16 +87,16 @@ h1{
             <div>
             <h1>Login Page</h1>
             <br>
-            <form action="" method="POST">
+            <form action="/loginPost" method="POST">
     
                 <div class="flex-container">
                     <div>Email</div>
-                    <div><input type="text" placeholder="Enter Email"></div>
+                    <div><input type="text" name="email" placeholder="Enter Email"></div>
                 </div>
                 <br>
                 <div class="flex-container">
                     <div>Password</div>
-                    <div><input type="password" placeholder="Enter Password"></div>
+                    <div><input type="password" name="password" placeholder="Enter Password"></div>
                 </div>
                 <br>
                 <div class="flex-containerbtn">

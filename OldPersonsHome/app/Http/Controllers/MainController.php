@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\accounts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class MainController extends Controller
 {
@@ -106,27 +107,14 @@ class MainController extends Controller
     }
 
     
-
+    // registration
     public function registration(Request $request){
-        // $fields = $request->validate([
-        //     'role' => 'required|string',
-        //     'fname' => 'required|string',
-        //     'lname' => 'required|string',
-        //     'email' => 'required|string|unique:accounts,Email',
-        //     'phone' => 'required|string',
-        //     'password' => 'required|string|confirmed',
-        //     'DOB' => 'required|date'
-        // ]);
-        // $fields = ([
-        //     'FName'=>request()->input('fname'),
-        //     'LName'=>request()->input('lname'),
-        //     'email'=>request()->input('email'),
-        //     'phNo'=>request()->input('phone'),
-        //     'password'=>request()->input('password'),
-        //     'DOB'=>request()->input('DOB')
-        // ]);
+        // validates their imputs
+        $fields = $request->validate([
+            'email' => 'required|string|unique:accounts,Email'
+        ]);
 
-
+        // sends their information to the DB
         DB::table('accounts')->insert([
             'roleID' => $request->input('role'),
             'FName' => $request->input('fname'),
@@ -135,25 +123,40 @@ class MainController extends Controller
             'phNo' => $request->input('phone'),
             'password' => $request->input('password'),
             'DOB' => $request->input('DOB')
-    ]);
-        // DB::table('accounts')->insert(['FName'=>'fname']);
-        // DB::table('accounts')->insert(['LName'=>'lname']);
-        // DB::table('accounts')->insert(['Email'=>'email']);
-        // DB::table('accounts')->insert(['phNo'=>'phone']);
-        // DB::table('accounts')->insert(['password'=>'password']);
-        // DB::table('accounts')->insert(['DOB'=>'DOB']);
+        ]);
 
-        // accounts::create([
-        //     'roleID'=>$fields['role'],
-        //     'FName'=>$fields['fname'],
-        //     'LName'=>$fields['lname'],
-        //     'Email'=>$fields['email'],
-        //     'phNo'=>$fields['phone'],
-        //     'password'=>$fields['password'],
-        //     'DOB'=>$fields['DOB']
-            
-        // ]);
+        // redirects to the login page
         return redirect('/login');
+    }
+
+
+    // Login 
+    public function loginPost(Request $request){
+        // validate inputs
+        $fields = $request->validate([
+            'email' => 'required|string|unique:accounts,Email',
+            'password' => 'Required|string'
+        ]);
+
+        // get user info from DB on email
+        $user = DB::table('accounts')->where
+            ('Email', $fields['email'])->first();
+
+        // check if user has correct password
+        if(!$user || ($fields['password'] != $user->password)){
+            return response([
+                'message' => 'Your email or password is incorrect'
+            ], 401);
+        };
+
+        // checks if their account is approved
+        if($user->isRegApproved = NULL){
+            return response([
+                'message' => 'Your account is not approved.'
+            ], 401);
+        };
+
+        
     }
 
 }
