@@ -70,5 +70,14 @@
         <input type="submit" value="Cancel">
     </div>
 
+    <div>
+        <script>
+            function goBack() {
+              window.history.back();
+            }
+            </script>
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
 </body>
 </html>

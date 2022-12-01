@@ -29,11 +29,16 @@ Route::get('/familyMemberHome', [MainController::class, 'familyMemberHome']);
 Route::get('/adminReport', [MainController::class, 'adminReport']);
 Route::get('/payment', [MainController::class, 'payment']);
 Route::get('/homepage', [MainController::class, 'homepage']);
-Route::get('/registration', [MainController::class, 'registration']);
 Route::get('/roles', [MainController::class, 'roles']);
 Route::get('/login', [MainController::class, 'login']);
+Route::post('/login', [MainController::class, 'loginPost']);
 Route::get('/regisApproval', [MainController::class, 'regisApproval']);
+Route::get('/registration', [MainController::class, 'registrationGet']);
 Route::post('/registration', [MainController::class, 'registration']);
-
-
+Route::get('/adminIndex', [MainController::class, 'adminIndex']);
+Route::get('/superIndex', [MainController::class, 'superIndex']);
+Route::get('/docIndex', [MainController::class, 'docIndex']);
+Route::get('/careIndex', [MainController::class, 'careIndex']);
+Route::get('/patientHome', [MainController::class, 'patientIndex']);
+Route::get('/familyMemberHome', [MainController::class, 'famIndex']);
 
