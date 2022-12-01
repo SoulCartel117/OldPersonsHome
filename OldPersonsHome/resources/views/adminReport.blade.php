@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,5 +59,13 @@
             </tr>
         </table>
     </section>
+    <div>
+        <script>
+            function goBack() {
+              window.history.back();
+            }
+            </script>
+        <button onclick="goBack()">Go Back</button>
+    </div>
 </body>
 </html>

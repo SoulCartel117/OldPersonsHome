@@ -80,6 +80,14 @@
 
 
             </div>
+            <div>
+                <script>
+                    function goBack() {
+                      window.history.back();
+                    }
+                    </script>
+                <button onclick="goBack()">Go Back</button>
+            </div>
             <footer class="footer">
 
             </footer>

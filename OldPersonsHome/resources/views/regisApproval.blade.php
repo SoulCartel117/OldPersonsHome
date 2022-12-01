@@ -9,20 +9,46 @@
         </head>
         <body>
             <div class="main">
-                <div class="mainInside">
-                    <div class="nameRow">Name</div>
-                    <div class="roleRow">Role</div>
+                
+                <div class="patientInfo">
+                    <table>
+                        <tr>
+                            <th class="nameRow">Name</th>
+                            <th class="roleRow">Role</th>
+                        </tr>
+                        <tr>
+                            <?php 
+                        for ($x=0; $x < count($users); $x++){
+                            echo " <td> <p class='nameName'>".$users[$x]["FName"]."</p> </td>";
+                            echo "<td ><p class='roleRole'>".$users[$x]["role"]."</p> </td>";
+                            echo "<td><form class='checkBox'>
+                                <input type='hidden' name='_token' value='<?php echo csrf_token(); ?>'>
+                                <input type='radio' id='1' name='option' value='Yes'>
+                                <label class='yesCheck' for='1'>Yes</label>
+                                <input type='radio' id='2' name='option' value='No'>
+                                <label class='noCheck' for='2'>No</label>
+                            </form> </td>";
+                        } 
+                    ?>
+                        </tr>
+                    </table>
+                    
                 </div>
-                <form class="checkBox">
-                    <input type="radio" id="1" name="option" value="Yes">
-                    <label class="yesCheck" for="1">Yes</label>
-                    <input type="radio" id="2" name="option" value="No">
-                    <label class="noCheck" for="2">No</label>
-                </form>
+
+                
                 <form class="submitB">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                     <input class="okSubmit" type="submit" id="11" name="ok" value="OK">
                     <input class="cancelSubmit" type="submit" id="12" name="cancel" value="Cancel">
                 </form>
+                <div>
+                    <script>
+                        function goBack() {
+                          window.history.back();
+                        }
+                        </script>
+                    <button onclick="goBack()">Go Back</button>
+                </div>
             </div>
             <footer class="footer">
 
