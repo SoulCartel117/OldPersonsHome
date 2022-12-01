@@ -86,9 +86,10 @@ h1{
         <div class="main">
             <div>
             <h1>Login Page</h1>
+            <p> {{ $loginError }} </p>
             <br>
-            <form action="/loginPost" method="POST">
-    
+            <form action="/login" method="post">
+              <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <div class="flex-container">
                     <div>Email</div>
                     <div><input type="text" name="email" placeholder="Enter Email"></div>
@@ -101,7 +102,7 @@ h1{
                 <br>
                 <div class="flex-containerbtn">
                     <div><button type="button" class="cancelbtn" name="Cancel">Cancel</div>
-                    <div><button type="button" class="cancelbtn" name="Login">Login</div>
+                    <div><input type="submit" value="Login" class="cancelbtn" name="Login"></div>
                 </div>
             </form>
             </div>

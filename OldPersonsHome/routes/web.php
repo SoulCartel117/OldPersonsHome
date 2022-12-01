@@ -33,9 +33,8 @@ Route::get('/roles', [MainController::class, 'roles']);
 Route::get('/login', [MainController::class, 'login']);
 Route::post('/login', [MainController::class, 'loginPost']);
 Route::get('/regisApproval', [MainController::class, 'regisApproval']);
-Route::get('/registration', [MainController::class, 'registration']);
+Route::get('/registration', [MainController::class, 'registrationGet']);
 Route::post('/registration', [MainController::class, 'registration']);
-
 Route::get('/adminIndex', [MainController::class, 'adminIndex']);
 Route::get('/superIndex', [MainController::class, 'superIndex']);
 Route::get('/docIndex', [MainController::class, 'docIndex']);
