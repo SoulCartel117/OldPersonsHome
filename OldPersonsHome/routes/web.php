@@ -40,5 +40,6 @@ Route::get('/adminIndex', [MainController::class, 'adminIndex']);
 Route::get('/superIndex', [MainController::class, 'superIndex']);
 Route::get('/docIndex', [MainController::class, 'docIndex']);
 Route::get('/careIndex', [MainController::class, 'careIndex']);
-Route::get('/patientIndex', [MainController::class, 'patientIndex']);
-Route::get('/famIndex', [MainController::class, 'famIndex']);
+Route::get('/patientHome', [MainController::class, 'patientIndex']);
+Route::get('/familyMemberHome', [MainController::class, 'famIndex']);
+

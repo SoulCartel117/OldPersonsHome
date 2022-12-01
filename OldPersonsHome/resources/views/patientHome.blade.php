@@ -67,6 +67,6 @@
             </tr>
         </table>
     </section>
-
+    <div><button type="button" class="cancelbtn" name="Logout"><a href="/login"</a>Logout</div>
 </body>
 </html>

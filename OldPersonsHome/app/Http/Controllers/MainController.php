@@ -99,11 +99,11 @@ class MainController extends Controller
     }
 
     public function patientIndex(){
-        return view('patientIndex');
+        return view('patientHome');
     }
 
     public function famIndex(){
-        return view('famIndex');
+        return view('familyMemberHome');
     }
 
     
@@ -160,3 +160,4 @@ class MainController extends Controller
     }
 
 }
+
