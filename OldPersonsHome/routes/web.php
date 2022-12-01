@@ -35,5 +35,9 @@ Route::get('/login', [MainController::class, 'login']);
 Route::get('/regisApproval', [MainController::class, 'regisApproval']);
 Route::post('/registration', [MainController::class, 'registration']);
 
-
-
+Route::get('/adminIndex', [MainController::class, 'adminIndex']);
+Route::get('/superIndex', [MainController::class, 'superIndex']);
+Route::get('/docIndex', [MainController::class, 'docIndex']);
+Route::get('/careIndex', [MainController::class, 'careIndex']);
+Route::get('/patientIndex', [MainController::class, 'patientIndex']);
+Route::get('/famIndex', [MainController::class, 'famIndex']);

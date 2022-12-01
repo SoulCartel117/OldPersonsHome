@@ -18,7 +18,9 @@
                 </div>
                 <br>
                 <div class="flex-containerbtn">
-                    <div><button type="button" class="cancelbtn" name="Logout">Logout</div>
+                    <div>
+                        <button type="button" class="cancelbtn" name="Logout">Logout 
+                    </div>
                 </div>
             </form>
             </div>

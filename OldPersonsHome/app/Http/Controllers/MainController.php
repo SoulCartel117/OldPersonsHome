@@ -81,6 +81,30 @@ class MainController extends Controller
         return view('roles');
     }
 
+    public function adminIndex(){
+        return view('adminIndex');
+    }
+
+    public function superIndex(){
+        return view('superIndex');
+    }
+
+    public function docIndex(){
+        return view('docIndex');
+    }
+
+    public function careIndex(){
+        return view('careIndex');
+    }
+
+    public function patientIndex(){
+        return view('patientIndex');
+    }
+
+    public function famIndex(){
+        return view('famIndex');
+    }
+
     
 
     public function registration(Request $request){
