@@ -15,7 +15,7 @@ class MainController extends Controller
         return view('welcome');
     }
 
-    public function login(){
+    public function getLogin(){
         return view('login', ['loginError'=>'Please log in']);
 
     }
