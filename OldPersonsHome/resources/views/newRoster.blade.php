@@ -28,38 +28,50 @@
 
             <label for="super">Supervisor</label>
             <select id="super" name="supervisor">
-                <option></option>
-                <option value="something">some loop in here to make the right supervisors show</option>
+                <option value="" disabled selected>Select a Supervisor</option>
+                @foreach ($Super as $Super)
+                    <option value="{{ $Super->ID }}"> {{ $Super->FName }} {{$Super->LName}} </option>
+                @endforeach
             </select><br><br>
 
             <label for="doctor">Doctor</label>
             <select id="doctor" name="Doctor">
-                <option></option>
-                <option value="something">some loop in here to make the right doctor show</option>
+                <option value="" disabled selected>Select a Doctor</option>
+                @foreach ($Doctor as $Doctor)
+                    <option value="{{ $Doctor->ID }}"> {{ $Doctor->FName }} {{$Doctor->LName}} </option>
+                @endforeach
             </select><br><br>
 
-            <label for="caregiver">Caregiver 1</label>
-            <select id="caregiver" name="caregiver">
-                <option></option>
-                <option value="something">some loop in here to make the right caregiver show</option>
+            <label for="caregiver">Group 1</label>
+            <select id="caregiver1" name="caregiver1">
+                <option value="" disabled selected>Select a Caregiver for Group 1</option>
+                @foreach ($Caregiver as $Caregiver)
+                    <option value="{{ $Caregiver->ID }}"> {{ $Caregiver->FName }} {{$Caregiver->LName}} </option>
+                @endforeach
             </select><br><br>
 
-            <label for="caregiver">Caregiver 2</label>
-            <select id="caregiver" name="caregiver">
-                <option></option>
-                <option value="something">some loop in here to make the right caregiver show</option>
+            <label for="caregiver">Group 2</label>
+            <select id="caregiver2" name="caregiver2">
+                <option value="" disabled selected>Select a Caregiver for Group 2</option>
+                @foreach ($Caregiver as $Caregiver)
+                    <option value="{{ $Caregiver->ID }}"> {{ $Caregiver->FName }} {{$Caregiver->LName}} </option>
+                @endforeach
             </select><br><br>
 
-            <label for="caregiver">Caregiver 3</label>
-            <select id="caregiver" name="caregiver">
-                <option></option>
-                <option value="something">some loop in here to make the right caregiver show</option>
+            <label for="caregiver">Group 3</label>
+            <select id="caregiver3" name="caregiver3">
+                <option value="" disabled selected>Select a Caregiver for Group 3</option>
+                @foreach ($Caregiver as $Caregiver)
+                    <option value="{{ $Caregiver->ID }}"> {{ $Caregiver->FName }} {{$Caregiver->LName}} </option>
+                @endforeach
             </select><br><br>
 
-            <label for="caregiver">Caregiver 4</label>
-            <select id="caregiver" name="caregiver">
-                <option></option>
-                <option value="something">some loop in here to make the right caregiver show</option>
+            <label for="caregiver">Group 4</label>
+            <select id="caregiver4" name="caregiver4">
+                <option value="" disabled selected>Select a Caregiver for Group 4</option>
+                @foreach ($Caregiver as $Caregiver)
+                    <option value="{{ $Caregiver->ID }}"> {{ $Caregiver->FName }} {{$Caregiver->LName}} </option>
+                @endforeach
             </select><br><br>
 
         </form>
