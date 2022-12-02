@@ -26,38 +26,37 @@
 }
 .title{
     text-align: center;
-    margin-top: 3%;
+    margin-top: 3.2%;
     font-size: 45px;
 }
 .nameRow{
     width: 250px;
     border: 2px solid black;
-    background-color: blue;
+    background-color: rgb(68, 68, 182);
     color: white;
+    font-size: 25px;
 }
 .roleRow{
     width: 250px;
     border: 2px solid black;
-    background-color: blue;
+    background-color: rgb(68, 68, 182);
     color: white;
+    font-size: 25px;
 }
 .patientInfo{
     display: flex;
-    background-color: rgb(199, 199, 199);
+    font-size: 20px;
+    justify-content: center;
 }
-}
+
 .nameName, .roleRole{
     width: 250px;
-    border: 2px solid black;
-    background-color: blue;
-    color: white;
+    background-color: rgb(199, 199, 199);
+    text-align: center;
 }
 
 .checkBox{
-    margin-left: 70%;
-    font-size: 25px;
-    flex-direction: row;
-    display: flex;
+    font-size: 20px;
 }
 .yesCheck{
     width: 100px;
@@ -67,18 +66,23 @@
     margin-left: 50%;
 }
 .okSubmit{
-    font-size: 30px;
-    width: 200px;
-    height: 50px;
-    background-color: green;
+    font-size: 20px;
+    background-color: rgb(39, 106, 39);
     color: white;
     cursor: pointer;
 }
-.cancelSubmit{
+.okSubmit:hover {
+    background-color: rgb(62, 170, 62);
+}
+.okSubmit:active {
+    background-color: rgb(205, 242, 205);
+}
+
+/* .cancelSubmit{
     font-size: 30px;
     width: 200px;
     height: 50px;
-    background-color: green;
+    background-color: rgb(65, 141, 65);
     color: white;
     cursor: pointer;
-}
+} */

@@ -52,6 +52,7 @@ Route::get('/roles', [MainController::class, 'getRoles']);
 Route::get('/login', [MainController::class, 'getLogin']);
 
 Route::get('/regisApproval', [MainController::class, 'getRegisApproval']);
+Route::post('/regisApproval/{id}', [MainController::class, 'regisApproval']);
 
 Route::get('/adminIndex', [MainController::class, 'adminIndex']);
 

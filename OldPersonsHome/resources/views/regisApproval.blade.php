@@ -17,30 +17,26 @@
                             <th class="roleRow">Role</th>
                         </tr>
                         <tr>
-                            <?php 
-                        for ($x=0; $x < count($users); $x++){
-                            echo " <td> <p class='nameName'>".$users[$x]["FName"]."</p> </td>";
-                            echo "<td ><p class='roleRole'>".$users[$x]["role"]."</p> </td>";
-                            echo "<td><form class='checkBox'>
-                                <input type='hidden' name='_token' value='<?php echo csrf_token(); ?>'>
-                                <input type='radio' id='1' name='option' value='Yes'>
-                                <label class='yesCheck' for='1'>Yes</label>
-                                <input type='radio' id='2' name='option' value='No'>
-                                <label class='noCheck' for='2'>No</label>
-                            </form> </td>";
+                    <?php 
+                        for ($i=0; $i < count($users); $i++){
+                            echo "<td> <p class='nameName'>".$users[$i]["FName"]." ".$users[$i]["LName"]."</p></td>";
+                            echo "<td ><p class='roleRole'>".$users[$i]["role"]."</p> </td>";
+                            echo "<td>
+                                    <form class='checkBox' action='/regisApproval/{$users[$i]['ID']}' method='post'>
+                                        <input type='hidden' name='_token' value='<?php echo csrf_token(); ?>'>
+                                        <input type='radio' id='1' name='option' value='1'>
+                                        <label class='yesCheck' for='1'>Yes</label>
+                                        <input type='radio' id='2' name='option' value='0'>
+                                        <label class='noCheck' for='2'>No</label>
+                                        <input class='okSubmit' type='submit' id='11' name='ok' value='OK'>
+                                    </form>
+                                    </td>";
                         } 
-                    ?>
+                    ?>         
                         </tr>
                     </table>
                     
                 </div>
-
-                
-                <form class="submitB">
-                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-                    <input class="okSubmit" type="submit" id="11" name="ok" value="OK">
-                    <input class="cancelSubmit" type="submit" id="12" name="cancel" value="Cancel">
-                </form>
                 <div>
                     <script>
                         function goBack() {
