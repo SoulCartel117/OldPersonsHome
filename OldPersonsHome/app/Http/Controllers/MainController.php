@@ -27,15 +27,14 @@ class MainController extends Controller
     }
 
     public function regisApproval(Request $request, $id){
-        //attempting to insert option (yes or no) into accounts where id = $id
-        DB::table('accounts')->insert([
-            'isRegApproved' => $request->input('option')->where('ID', '=', $id)
-        ]);
+        //grabs the option from the form to enter into DB request
+        $option = $request->input('option');
+        
+        //updates table where id = id of account you clicked yes, sets isRegApproved to 1 or 0
+        DB::table('accounts')->where('ID', $id)->update(['isRegApproved' => $option]);
 
-        //information to load the page again with after done insertings
-        $data = DB::table('accounts')->join('roles', 'roles.roleID',  '=', 'accounts.roleID')->select('*')->whereNull('isRegApproved')->get();
-        $data = json_decode(json_encode($data), true);
-        return view('regisApproval')->with('users', $data);
+        //redirects back to page with updated info 
+        return redirect('/regisApproval');
     }
     
     public function getPatientAdditionalInfo(){
