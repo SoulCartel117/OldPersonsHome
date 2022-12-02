@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MainController;
+use App\http\Controllers\MainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ Route::get('/roles', [MainController::class, 'getRoles']);
 Route::get('/login', [MainController::class, 'getLogin']);
 
 Route::get('/regisApproval', [MainController::class, 'getRegisApproval']);
-Route::post('/regisApproval/{id}', [MainController::class, 'regisApproval']);
+Route::get('/regisApproval/{id}', [MainController::class, 'regisApproval']);
 
 Route::get('/adminIndex', [MainController::class, 'adminIndex']);
 
