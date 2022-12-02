@@ -21,14 +21,21 @@ class MainController extends Controller
     }
 
     public function getRegisApproval(){
-
         $data = DB::table('accounts')->join('roles', 'roles.roleID',  '=', 'accounts.roleID')->select('*')->whereNull('isRegApproved')->get();
         $data = json_decode(json_encode($data), true);
         return view('regisApproval')->with('users', $data);
     }
 
-    public function regisApproval(){
-        
+    public function regisApproval(Request $request, $id){
+        //attempting to insert option (yes or no) into accounts where id = $id
+        DB::table('accounts')->insert([
+            'isRegApproved' => $request->input('option')->where('ID', '=', $id)
+        ]);
+
+        //information to load the page again with after done insertings
+        $data = DB::table('accounts')->join('roles', 'roles.roleID',  '=', 'accounts.roleID')->select('*')->whereNull('isRegApproved')->get();
+        $data = json_decode(json_encode($data), true);
+        return view('regisApproval')->with('users', $data);
     }
     
     public function getPatientAdditionalInfo(){
@@ -122,7 +129,7 @@ class MainController extends Controller
     
     // registration
     public function registration(Request $request){
-        // validates their imputs
+        // validates their inputs
         $fields = $request->validate([
             'email' => 'required|string|unique:accounts,Email'
         ]);
