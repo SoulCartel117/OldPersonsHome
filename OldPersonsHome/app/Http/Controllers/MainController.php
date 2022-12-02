@@ -4,81 +4,97 @@ namespace App\Http\Controllers;
 
 use App\Models\accounts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class MainController extends Controller
 {
 
-    public function home(){
+    public function getHome(){
         return view('welcome');
     }
 
     public function login(){
-        return view('login');
+        return view('login', ['loginError'=>'Please log in']);
+
     }
 
-    public function regisApproval(){
-        return view('regisApproval');
+    public function getRegisApproval(){
+        $data = DB::table('accounts')->join('roles', 'roles.roleID',  '=', 'accounts.roleID')->select('*')->whereNull('isRegApproved')->get();
+        $data = json_decode(json_encode($data), true);
+        return view('regisApproval')->with('users', $data);
+    }
+
+    public function regisApproval(Request $request, $id){
+        //attempting to insert option (yes or no) into accounts where id = $id
+        DB::table('accounts')->insert([
+            'isRegApproved' => $request->input('option')->where('ID', '=', $id)
+        ]);
+
+        //information to load the page again with after done insertings
+        $data = DB::table('accounts')->join('roles', 'roles.roleID',  '=', 'accounts.roleID')->select('*')->whereNull('isRegApproved')->get();
+        $data = json_decode(json_encode($data), true);
+        return view('regisApproval')->with('users', $data);
     }
     
-    public function patientAdditionalInfo(){
+    public function getPatientAdditionalInfo(){
         return view('patientAdditionalInfo');
     }
 
-    public function doctorAppt(){
+    public function getDoctorAppt(){
         return view('doctorAppt');
     }
 
-    public function patientHome(){
+    public function getPatientHome(){
         return view('patientHome');
     }
 
-    public function employee(){
+    public function getEmployee(){
         return view('employee');
     }
 
-    public function patients(){
+    public function getPatients(){
         return view('patients');
     }
 
-    public function roster(){
+    public function getRoster(){
         return view('roster');
     }
 
-    public function newRoster(){
+    public function getNewRoster(){
         return view('newRoster');
     }
 
-    public function doctorHome(){
+    public function getDoctorHome(){
         return view('doctorHome');
     }
 
-    public function patientOfDoctor(){
+    public function getPatientOfDoctor(){
         return view('patientOfDoctor');
     }
 
-    public function caregiverHome(){
+    public function getCaregiverHome(){
         return view('caregiverHome');
     }
 
-    public function familyMemberHome(){
+    public function getFamilyMemberHome(){
         return view('familyMemberHome');
     }
 
-    public function adminReport(){
+    public function getAdminReport(){
         return view('adminReport');
     }
 
-    public function payment(){
+    public function getPayment(){
         return view('payment');
     }
 
-    public function homepage(){
+    public function getHomepage(){
         return view('homepage');
     }
 
-    public function roles(){
+    public function getRoles(){
         return view('roles');
     }
 
@@ -106,10 +122,14 @@ class MainController extends Controller
         return view('familyMemberHome');
     }
 
+    public function getRegistration(){
+        return view('registration');
+    }
+
     
     // registration
     public function registration(Request $request){
-        // validates their imputs
+        // validates their inputs
         $fields = $request->validate([
             'email' => 'required|string|unique:accounts,Email'
         ]);
@@ -125,6 +145,29 @@ class MainController extends Controller
             'DOB' => $request->input('DOB')
         ]);
 
+        $user = DB::table('accounts')->where
+            ('Email', $request->input('email'))->first();
+
+        
+        if($request->input('role') == 5){
+            DB::table('familycode')->insert([
+                'patientID'=>$user->ID,
+                'familyCode' => $request->input('familyCode')
+            ]);
+    
+            $FCID = DB::table('familycode')->where
+            ('patientID', $user->ID)->first();
+
+            DB::table('patient')->insert([
+                'patientID'=>$user->ID,
+                'FCID' => $FCID->FCID,
+                'admissionDate' => (date('Y')."-".date('m')."-".date('d')),
+                'emContact' => $request->input('familyName'),
+                'emContactPhNo' => $request->input('familyPhone'),
+                'relationEmContact' => $request->input('familyRelation')
+            ]);
+        }
+
         // redirects to the login page
         return redirect('/login');
     }
@@ -132,31 +175,46 @@ class MainController extends Controller
 
     // Login 
     public function loginPost(Request $request){
-        // validate inputs
-        $fields = $request->validate([
-            'email' => 'required|string|unique:accounts,Email',
-            'password' => 'Required|string'
-        ]);
-
         // get user info from DB on email
         $user = DB::table('accounts')->where
-            ('Email', $fields['email'])->first();
+            ('Email', $request->input('email'))->first();
 
         // check if user has correct password
-        if(!$user || ($fields['password'] != $user->password)){
-            return response([
-                'message' => 'Your email or password is incorrect'
-            ], 401);
+        if(!$user || ($request->input('password') != $user->password)){
+            return view('login', ['loginError'=>'Your email or username is incorrect']);
         };
 
         // checks if their account is approved
-        if($user->isRegApproved = NULL){
-            return response([
-                'message' => 'Your account is not approved.'
-            ], 401);
+        if($user->isRegApproved == NULL){
+            return view('login', ['loginError'=>'Your account is not approved']);
         };
 
-        
+        // get user role
+        $role = $user->roleID;
+
+        // redirect to correct home page based on role
+        if($role == 1){
+            return redirect('/adminIndex');
+        }
+        if($role == 2){
+            return redirect('/superIndex');
+        }
+        if($role == 3){
+            return redirect('/docIndex');
+        }
+        if($role == 4){
+            return redirect('/careIndex');
+        }
+        if($role == 5){
+            return redirect('/patientHome');
+        }
+        if($role == 6){
+            return redirect('/famlyMemberHome');
+        }
+
+        // return login page if nothing else
+        return redirect('/login');
+
     }
 
 }
