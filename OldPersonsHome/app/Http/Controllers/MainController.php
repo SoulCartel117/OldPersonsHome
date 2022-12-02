@@ -15,7 +15,7 @@ class MainController extends Controller
         return view('welcome');
     }
 
-    public function login(){
+    public function getLogin(){
         return view('login', ['loginError'=>'Please log in']);
 
     }
@@ -27,15 +27,14 @@ class MainController extends Controller
     }
 
     public function regisApproval(Request $request, $id){
-        //attempting to insert option (yes or no) into accounts where id = $id
-        DB::table('accounts')->insert([
-            'isRegApproved' => $request->input('option')->where('ID', '=', $id)
-        ]);
+        //grabs the option from the form to enter into DB request
+        $option = $request->input('option');
+        
+        //updates table where id = id of account you clicked yes, sets isRegApproved to 1 or 0
+        DB::table('accounts')->where('ID', $id)->update(['isRegApproved' => $option]);
 
-        //information to load the page again with after done insertings
-        $data = DB::table('accounts')->join('roles', 'roles.roleID',  '=', 'accounts.roleID')->select('*')->whereNull('isRegApproved')->get();
-        $data = json_decode(json_encode($data), true);
-        return view('regisApproval')->with('users', $data);
+        //redirects back to page with updated info 
+        return redirect('/regisApproval');
     }
     
     public function getPatientAdditionalInfo(){
@@ -63,7 +62,17 @@ class MainController extends Controller
     }
 
     public function getNewRoster(){
-        return view('newRoster');
+
+        $super = DB::table('accounts')->where
+        ('roleID', 2)->get();
+
+        $doctor = DB::table('accounts')->where
+        ('roleID', 3)->get();
+
+        $caregiver = DB::table('accounts')->where
+        ('roleID', 4)->get();
+
+        return view('newRoster', ['Super'=>$super],['Doctor'=>$doctor],['Caregiver'=>$caregiver]);
     }
 
     public function getDoctorHome(){
@@ -145,16 +154,19 @@ class MainController extends Controller
             'DOB' => $request->input('DOB')
         ]);
 
+        // then we regrab that perviously entered information 
         $user = DB::table('accounts')->where
             ('Email', $request->input('email'))->first();
 
-        
+        // then we check if Role from $user is a patient and then update the em contact stuff
+        // we may want to added validation to ensure those fields are filled in 
         if($request->input('role') == 5){
             DB::table('familycode')->insert([
                 'patientID'=>$user->ID,
                 'familyCode' => $request->input('familyCode')
             ]);
-    
+            
+            // get FCID info we just inserted to update the patients table
             $FCID = DB::table('familycode')->where
             ('patientID', $user->ID)->first();
 

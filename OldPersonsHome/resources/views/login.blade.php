@@ -88,7 +88,7 @@ h1{
             <h1>Login Page</h1>
             <p> {{ $loginError }} </p>
             <br>
-            <form action="/login" method="post">
+            <form action="/login" method="POST">
               <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <div class="flex-container">
                     <div>Email</div>
