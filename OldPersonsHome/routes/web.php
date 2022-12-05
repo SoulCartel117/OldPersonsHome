@@ -50,6 +50,7 @@ Route::get('/registration', [MainController::class, 'registration']);
 Route::get('/roles', [MainController::class, 'getRoles']);
 
 Route::get('/login', [MainController::class, 'getLogin']);
+Route::post('/login', [MainController::class, 'LoginPost']);
 
 Route::get('/regisApproval', [MainController::class, 'getRegisApproval']);
 Route::post('/regisApproval/{id}', [MainController::class, 'regisApproval']);

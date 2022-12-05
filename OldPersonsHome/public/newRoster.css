@@ -6,6 +6,7 @@ h1 {
 
 .dateDiv{
     display: flex;
+    align-items: center;
     justify-content: center;
 }
 
