@@ -71,8 +71,9 @@ class MainController extends Controller
 
         $caregiver = DB::table('accounts')->where
         ('roleID', 4)->get();
+        //var_dump($caregiver);
 
-        return view('newRoster', ['Super'=>$super],['Doctor'=>$doctor],['Caregiver'=>$caregiver]);
+        return view('newRoster',['Super'=>$super,'Doctors'=>$doctor,'Care'=>$caregiver]);
     }
 
     public function getDoctorHome(){
