@@ -18,12 +18,11 @@ h1 {
 }
 
 .leftDiv{
-    width: 50%;
-    height: 100%;
+    width: fit-content;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
     padding-top: 15px;
+    flex-direction: column;
 }
 
 select {
@@ -32,10 +31,10 @@ select {
 }
 
 .rightDiv{
+    display: flex;
     padding-top: 15px;
     width: 50%;
     height: 100%;
-    display: flex;
     justify-content: center;
     align-items: center;
 }
