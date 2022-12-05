@@ -29,7 +29,7 @@ class MainController extends Controller
     public function regisApproval(Request $request, $id){
         //grabs the option from the form to enter into DB request
         $option = $request->input('option');
-        
+
         //updates table where id = id of account you clicked yes, sets isRegApproved to 1 or 0
         DB::table('accounts')->where('ID', $id)->update(['isRegApproved' => $option]);
 
@@ -48,8 +48,67 @@ class MainController extends Controller
         return redirect('/patientAdditionalInfo');
     }
 
-    public function getDoctorAppt(){
-        return view('doctorAppt');
+    public function getDoctorAppt(Request $request){
+        // patient1 is button. 
+        $patient1 = $request->input("searchPt");
+        // initialize $pid to assign value later
+        $pid;
+        //if patient1(button) is not null aka it's been pressed, then make $pid = input name='pid'
+        if($patient1 != null){
+            $pid = $request->input('pid');
+            } 
+        else {
+            $pid = 2;
+        }
+
+        //SELECT * FROM `accounts` where roleID = 5 (patient) and ID = $pid and isRegApproved = 1
+        //populates box on side once patient id is entered
+        $pt = DB::table('accounts')->select('*')->whereroleidAndIsregapprovedAndId(5, 1, $pid)->get();
+        $pt = json_decode(json_encode($pt), true);
+
+        // searchDate is button
+        $searchDate = $request->input("searchDate");
+        //initialize $date to assign value later
+        $date;
+        //if searchDate(button) is not null aka it's been pressed, then make $date = input name='date' else make it today's date
+        if($searchDate != null){
+            $date = $request->input('date');
+        }else{
+            $date = date("Y-m-d");
+        }
+        
+        // doctor is button
+        $doctor = $request->input("searchDr");
+
+        //joins tables to populate select/option with doctors working that date 
+        $data = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID', 'accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+        $data = json_decode(json_encode($data), true);
+
+        //get doctorID to insert into appt table
+        $doctorID = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID')->where('roster.date', '=', $date)->get();
+        //get supervisorID to insert into appt table
+        $supervisorID = DB::table('accounts')->join('roster', 'roster.supervisorID',  '=', 'accounts.ID')->select('roster.supervisorID')->where('roster.date', '=', $date)->get();
+        //get patient group, number select groupID from accounts where id = pid;
+        $group = DB::table('accounts')->select('groupID')->where('ID', '=', 48)->get();
+        
+        //get caregiver to insert into appt table
+        if ($group == 1){
+            //SELECT a.FName FROM accounts a join roster r on r.group1 = a.ID join caregiver c USING (date) where r.date = '2022-12-05';
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
+        } elseif($group == 2){
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
+        } elseif($group == 3){
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
+        } else {
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
+        } 
+        
+        
+        
+        //$insert =DB::table();
+
+        
+        return view('doctorAppt')->with('patient', $pt)->with('date', $date)->with('doctors', $data);
     }
 
     public function getPatientHome(){
@@ -64,8 +123,36 @@ class MainController extends Controller
         return view('patients');
     }
 
-    public function getRoster(){
-        return view('roster');
+    public function getRoster(Request $request){
+        // date is button
+        $date = $request->input("searchByDate");
+        // initialize $frmDateReg to assign value later
+        $frmDateReg;
+        if($date != null){
+            $frmDateReg = $request->input('frmDateReg');
+        }else{
+            $frmDateReg = date("Y-m-d");
+        }
+
+        $data5 = DB::table('accounts')->join('roster', 'roster.supervisorID',  '=', 'accounts.ID')->select('*')->where('roster.date', '=', $frmDateReg)->get();
+        $data5 = json_decode(json_encode($data5), true);
+
+        $data0 = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('*')->where('roster.date', '=', $frmDateReg)->get();
+        $data0 = json_decode(json_encode($data0), true);
+
+        $data1 = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->select('*')->where('roster.date', '=', $frmDateReg)->get();
+        $data1 = json_decode(json_encode($data1), true);
+
+        $data2 = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->select('*')->where('roster.date', '=', $frmDateReg)->get();
+        $data2 = json_decode(json_encode($data2), true);
+
+        $data3 = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->select('*')->where('roster.date', '=', $frmDateReg)->get();
+        $data3 = json_decode(json_encode($data3), true);
+
+        $data4 = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->select('*')->where('roster.date', '=', $frmDateReg)->get();
+        $data4 = json_decode(json_encode($data4), true);
+
+        return view('roster')->with('date', $frmDateReg)->with('users5', $data5)->with('users0', $data0)->with('users1', $data1)->with('users2', $data2)->with('users3', $data3)->with('users4', $data4);
     }
 
     public function getNewRoster(){
@@ -78,8 +165,9 @@ class MainController extends Controller
 
         $caregiver = DB::table('accounts')->where
         ('roleID', 4)->get();
+        //var_dump($caregiver);
 
-        return view('newRoster', ['Super'=>$super],['Doctor'=>$doctor],['Caregiver'=>$caregiver]);
+        return view('newRoster',['Super'=>$super,'Doctors'=>$doctor,'Care'=>$caregiver]);
     }
 
     public function getDoctorHome(){

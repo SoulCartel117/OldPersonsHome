@@ -11,18 +11,14 @@
             <div class="main">
                 
                 <div class="patientInfo">
-                    <table>
-                        <tr>
-                            <th class="nameRow">Name</th>
-                            <th class="roleRow">Role</th>
-                        </tr>
-                        <tr>
+                        <div class="nameRow">Name</div>
+                        <div class="roleRow">Role</div>
                     <?php 
                         for ($i=0; $i < count($users); $i++){
-                            echo "<td> <p class='nameName'>".$users[$i]["FName"]." ".$users[$i]["LName"]."</p></td>";
-                            echo "<td ><p class='roleRole'>".$users[$i]["role"]."</p> </td>";
-                            echo "<td>
-                                    <form class='checkBox' action='/regisApproval/2' method='get'>
+                            echo "<p class='nameName'>".$users[$i]["FName"]." ".$users[$i]["LName"]."</p>
+                                    <p class='roleRole'>".$users[$i]["role"]."</p>
+                                    <form class='checkBox' action='/regisApproval/{$users[$i]['ID']}' method='post'>
+                                        <input type='hidden' name='_token' value=".csrf_token().">
                                         <input type='radio' id='1' name='option' value='1'>
                                         <label class='yesCheck' for='1'>Yes</label>
 
@@ -30,12 +26,10 @@
                                         <label class='noCheck' for='2'>No</label>
 
                                         <input class='okSubmit' type='submit' id='11' name='ok' value='OK'>
-                                    </form>
-                                    </td>";
+                                    </form>";      
                         } 
                     ?>         
-                        </tr>
-                    </table>
+            
                     
                 </div>
                 <div>

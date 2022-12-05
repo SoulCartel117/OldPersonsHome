@@ -46,7 +46,7 @@ Route::get('/payment', [MainController::class, 'getPayment']);
 Route::get('/homepage', [MainController::class, 'getHomepage']);
 
 Route::get('/registration', [MainController::class, 'getRegistration']);
-Route::post('/registration', [MainController::class, 'registration']);
+Route::get('/registration', [MainController::class, 'registration']);
 
 Route::get('/roles', [MainController::class, 'getRoles']);
 
@@ -54,7 +54,7 @@ Route::get('/login', [MainController::class, 'getLogin']);
 Route::post('/login', [MainController::class, 'LoginPost']);
 
 Route::get('/regisApproval', [MainController::class, 'getRegisApproval']);
-Route::get('/regisApproval/{id}', [MainController::class, 'regisApproval']);
+Route::post('/regisApproval/{id}', [MainController::class, 'regisApproval']);
 
 Route::get('/adminIndex', [MainController::class, 'adminIndex']);
 

@@ -11,21 +11,10 @@
     <p> <h1>Roster</h1> </p>
 
     <div class="dateDiv">
-        <form action="">
+        <form action="/roster" method="get">
             <label for="date">Date</label>
-            <input type="text" name="frmDateReg" required id="frmDate" value=""><br><br>
-            <script>
-                function getDate(){
-                    var todaydate = new Date();
-                    var day = todaydate.getDate();
-                    var month = todaydate.getMonth() + 1;
-                    var year = todaydate.getFullYear();
-                    var datestring = month + "/" + day + "/" + year;
-                    document.getElementById("frmDate").value = datestring;
-                } 
-                getDate(); 
-            </script>
-            
+            <input type="date" name="frmDateReg" required id="frmDate" value="{{$date}}"><br><br>
+            <input class='okSubmit' type='submit' id='11' name='searchByDate' value='OK'>
         </form>
     </div>
 
@@ -34,26 +23,20 @@
             <tr>
                 <th>Supervisor</th>
                 <th>Doctor</th>
-                <th>Caregiver 1</th>
-                <th>Caregiver 2</th>
-                <th>Caregiver 3</th>
-                <th>Caregiver 4</th>
+                <th>Group 1</th>
+                <th>Group 2</th>
+                <th>Group 3</th>
+                <th>Group 4</th>
             </tr>
             <tr>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td>PatientGroup1</td>
-                <td>PatientGroup2</td>
-                <td>PatientGroup3</td>
-                <td>PatientGroup4</td>
+                <?php echo
+                "<td>".$users5[0]['FName']." ".$users5[0]['LName']."</td> 
+                <td>".$users0[0]['FName']." ".$users0[0]['LName']."</td> 
+                <td>".$users1[0]['FName']." ".$users1[0]['LName']."</td> 
+                <td>".$users2[0]['FName']." ".$users2[0]['LName']."</td> 
+                <td>".$users3[0]['FName']." ".$users3[0]['LName']."</td> 
+                <td>".$users4[0]['FName']." ".$users4[0]['LName']."</td> "
+                ?>
             </tr>
         </table>
     </section>
