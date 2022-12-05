@@ -11,25 +11,18 @@
     <p> <h1>New Roster</h1> </p>
 
     <div class="dateDiv">
-        <form action="">
+        <form action="/newRoster" method="post">
+            <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <label for="date">Date</label>
-            <input type="text" name="frmDateReg" required id="frmDate" value=""><br><br>
+            <input type="date" name="frmDateReg" required id="frmDate" value=""><br><br>
             <script>
-                function getDate(){
-                    var todaydate = new Date();
-                    var day = todaydate.getDate();
-                    var month = todaydate.getMonth() + 1;
-                    var year = todaydate.getFullYear();
-                    var datestring = month + "/" + day + "/" + year;
-                    document.getElementById("frmDate").value = datestring;
-                } 
-                getDate(); 
+                document.getElementById('frmDate').valueAsDate = new Date();
             </script>
 
             
             <div class="dateDiv">
                 <label for="super">Supervisor</label>
-                <select id="super" name="supervisor">
+                <select id="super" name="Supervisor">
                     <option value="" disabled selected>Select a Supervisor</option>
                     @foreach ($Super as $Super)
                         <option value="{{ $Super->ID }}"> {{ $Super->FName }} {{$Super->LName}} </option>
@@ -93,13 +86,13 @@
             </div>
             <br><br>
 
-        </form>
     </div>
 
-    <div class="buttonDiv">
-        <input type="submit" value="Submit">
-        <input type="submit" value="Cancel">
-    </div>
+        <div class="buttonDiv">
+            <input type="submit" value="Submit">
+            <input type="submit" value="Cancel">
+        </div>
+    </form>
 
     <div>
         <script>
