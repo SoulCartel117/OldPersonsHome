@@ -22,12 +22,13 @@
                             echo "<td> <p class='nameName'>".$users[$i]["FName"]." ".$users[$i]["LName"]."</p></td>";
                             echo "<td ><p class='roleRole'>".$users[$i]["role"]."</p> </td>";
                             echo "<td>
-                                    <form class='checkBox' action='/regisApproval/{$users[$i]['ID']}' method='post'>
-                                        <input type='hidden' name='_token' value='<?php echo csrf_token(); ?>'>
+                                    <form class='checkBox' action='/regisApproval/2' method='get'>
                                         <input type='radio' id='1' name='option' value='1'>
                                         <label class='yesCheck' for='1'>Yes</label>
+
                                         <input type='radio' id='2' name='option' value='0'>
                                         <label class='noCheck' for='2'>No</label>
+
                                         <input class='okSubmit' type='submit' id='11' name='ok' value='OK'>
                                     </form>
                                     </td>";
