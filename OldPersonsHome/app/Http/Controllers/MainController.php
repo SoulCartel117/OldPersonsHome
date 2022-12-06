@@ -157,6 +157,7 @@ class MainController extends Controller
 
     public function getNewRoster(){
 
+        // gets the supervisors, doctors and caretakers and send it to the page for the drop downs
         $super = DB::table('accounts')->where
         ('roleID', 2)->get();
 
@@ -165,7 +166,89 @@ class MainController extends Controller
 
         $caregiver = DB::table('accounts')->where
         ('roleID', 4)->get();
-        //var_dump($caregiver);
+
+        return view('newRoster',['Super'=>$super,'Doctors'=>$doctor,'Care'=>$caregiver]);
+    }
+
+    public function postNewRoster(Request $request){
+        //check if roster exist for the date
+        $rosterDate = $caregiver = DB::table('roster')->where
+        ('date', $request->input('frmDateReg'))->get();
+
+        $DateCount = DB::select("select count(*) as count from roster where date = '2022-12-06'")[0];
+        $DateCount = json_decode(json_encode($DateCount), true)["count"];
+        
+        if($DateCount <= 1){
+            //get the new roster info
+            $nSuperID = $request->input('Supervisor');
+            $nDocID = $request->input('Doctor');
+            $nGroup1 = $request->input('caregiver1');
+            $nGroup2 = $request->input('caregiver2');
+            $nGroup3 = $request->input('caregiver3');
+            $nGroup4 = $request->input('caregiver4');
+
+            //get the older roster info
+            $oSuperID = $rosterDate[0]->supervisorID;
+            $oDocID = $rosterDate[0]->doctorID;
+            $oGroup1 = $rosterDate[0]->group1;
+            $oGroup2 = $rosterDate[0]->group2;
+            $oGroup3 = $rosterDate[0]->group3;
+            $oGroup4 = $rosterDate[0]->group4;
+
+            // compare old and new groups
+            if($nSuperID != $oSuperID && $nSuperID != null){
+                $oSuperID = $nSuperID;
+            }
+            if($nDocID != $oDocID && $nDocID != null){
+                $oDocID = $nDocID;
+            }
+            if($nGroup1 != $oGroup1 && $nGroup1 != null){
+                $oGroup1 = $nGroup1;
+            }
+            if($nGroup2 != $oGroup2 && $nGroup2 != null){
+                $oGroup2 = $nGroup2;
+            }
+            if($nGroup3 != $oGroup3 && $nGroup3 != null){
+                $oGroup3 = $nGroup3;
+            }
+            if($nGroup4 != $oGroup4 && $nGroup4 != null){
+                $oGroup4 = $nGroup4;
+            }
+            // send all the data
+            DB::table('roster')->where('date',$request->input('frmDateReg'))
+                ->update([
+                'supervisorID' => $oSuperID,
+                'doctorID' => $oDocID,
+                'group1' => $oGroup1,
+                'group2' => $oGroup2,
+                'group3' => $oGroup3,
+                'group4' => $oGroup4                
+            ]);
+        }
+        else{
+        //sends data to create a new roster 
+        DB::table('roster')->insert([
+            'supervisorID' => $request->input('Supervisor'),
+            'doctorID' => $request->input('Doctor'),
+            'group1' => $request->input('caregiver1'),
+            'group2' => $request->input('caregiver2'),
+            'group3' => $request->input('caregiver3'),
+            'group4' => $request->input('caregiver4'),
+            'date' => $request->input('frmDateReg')
+        ]);
+        
+        }
+
+        
+        // gets the supervisors, doctors and caretakers and send it to the page for the drop downs
+        $super = DB::table('accounts')->where
+        ('roleID', 2)->get();
+
+        $doctor = DB::table('accounts')->where
+        ('roleID', 3)->get();
+
+        $caregiver = DB::table('accounts')->where
+        ('roleID', 4)->get();
 
         return view('newRoster',['Super'=>$super,'Doctors'=>$doctor,'Care'=>$caregiver]);
     }
