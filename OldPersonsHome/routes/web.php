@@ -20,6 +20,7 @@ Route::get('/patientAdditionalInfo', [MainController::class, 'getPatientAddition
 Route::post('/patientAdditionalInfo', [MainController::class, 'postPatientAdditionalInfo']);
 
 Route::get('/doctorAppt', [MainController::class, 'getDoctorAppt']);
+Route::post('/doctorAppt', [MainController::class, 'postDoctorAppt']);
 
 Route::get('/patientHome', [MainController::class, 'getPatientHome']);
 
