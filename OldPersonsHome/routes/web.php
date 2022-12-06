@@ -17,8 +17,10 @@ use App\http\Controllers\MainController;
 Route::get('/', [MainController::class, 'getHome']);
 
 Route::get('/patientAdditionalInfo', [MainController::class, 'getPatientAdditionalInfo']);
+Route::post('/patientAdditionalInfo', [MainController::class, 'postPatientAdditionalInfo']);
 
 Route::get('/doctorAppt', [MainController::class, 'getDoctorAppt']);
+Route::post('/doctorAppt', [MainController::class, 'postDoctorAppt']);
 
 Route::get('/patientHome', [MainController::class, 'getPatientHome']);
 
@@ -29,6 +31,7 @@ Route::get('/patients', [MainController::class, 'getPatients']);
 Route::get('/roster', [MainController::class, 'getRoster']);
 
 Route::get('/newRoster', [MainController::class, 'getNewRoster']);
+Route::post('/newRoster', [MainController::class, 'postNewRoster']);
 
 Route::get('/doctorHome', [MainController::class, 'getDoctorHome']);
 
@@ -53,7 +56,7 @@ Route::get('/login', [MainController::class, 'getLogin']);
 Route::post('/login', [MainController::class, 'LoginPost']);
 
 Route::get('/regisApproval', [MainController::class, 'getRegisApproval']);
-Route::get('/regisApproval/{id}', [MainController::class, 'regisApproval']);
+Route::post('/regisApproval/{id}', [MainController::class, 'regisApproval']);
 
 Route::get('/adminIndex', [MainController::class, 'adminIndex']);
 
