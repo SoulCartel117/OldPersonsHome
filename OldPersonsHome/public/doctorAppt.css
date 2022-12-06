@@ -51,6 +51,12 @@ label {
     border-radius: 0 8px 0 0;
 }
 
+textarea {
+    width: 200px;
+    height: 50px;
+    margin-top: 3px;
+}
+
 .mainDiv input{
     margin-left: 5px;
     border: 6px solid #1982ff;
