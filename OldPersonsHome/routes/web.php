@@ -17,6 +17,7 @@ use App\http\Controllers\MainController;
 Route::get('/', [MainController::class, 'getHome']);
 
 Route::get('/patientAdditionalInfo', [MainController::class, 'getPatientAdditionalInfo']);
+Route::post('/patientAdditionalInfo', [MainController::class, 'postPatientAdditionalInfo']);
 
 Route::get('/doctorAppt', [MainController::class, 'getDoctorAppt']);
 

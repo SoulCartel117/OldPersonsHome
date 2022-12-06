@@ -40,6 +40,13 @@ class MainController extends Controller
     public function getPatientAdditionalInfo(){
         return view('patientAdditionalInfo');
     }
+    public function postPatientAdditionalInfo(Request $request){
+        DB::table('patient')
+            ->where('groupID', 'gid')
+            ->update(['groupID' => 'gid']);
+
+        return redirect('/patientAdditionalInfo');
+    }
 
     public function getDoctorAppt(Request $request){
         // patient1 is button. 
@@ -399,6 +406,7 @@ class MainController extends Controller
         return redirect('/login');
 
     }
+
 
 }
 
