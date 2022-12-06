@@ -19,6 +19,7 @@ Route::get('/', [MainController::class, 'getHome']);
 Route::get('/patientAdditionalInfo', [MainController::class, 'getPatientAdditionalInfo']);
 
 Route::get('/doctorAppt', [MainController::class, 'getDoctorAppt']);
+Route::post('/doctorAppt', [MainController::class, 'postDoctorAppt']);
 
 Route::get('/patientHome', [MainController::class, 'getPatientHome']);
 
@@ -45,7 +46,7 @@ Route::get('/payment', [MainController::class, 'getPayment']);
 Route::get('/homepage', [MainController::class, 'getHomepage']);
 
 Route::get('/registration', [MainController::class, 'getRegistration']);
-Route::get('/registration', [MainController::class, 'registration']);
+Route::post('/registration', [MainController::class, 'registration']);
 
 Route::get('/roles', [MainController::class, 'getRoles']);
 
