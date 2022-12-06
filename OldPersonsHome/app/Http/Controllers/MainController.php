@@ -168,12 +168,10 @@ class MainController extends Controller
         $rosterDate = $caregiver = DB::table('roster')->where
         ('date', $request->input('frmDateReg'))->get();
 
-        // $DBdate1 = strtotime($rosterDate[0]->date);
-        // $DBdate = date('m-d-Y',$DBdate1);
-        // echo $DBdate;
-        // dd($request->input('date'));
-        // echo $DBdateFinal;
-        if($rosterDate == true){
+        $DateCount = DB::select("select count(*) as count from roster where date = '2022-12-06'")[0];
+        $DateCount = json_decode(json_encode($DateCount), true)["count"];
+        
+        if($DateCount <= 1){
             //get the new roster info
             $nSuperID = $request->input('Supervisor');
             $nDocID = $request->input('Doctor');
@@ -192,22 +190,22 @@ class MainController extends Controller
 
             // compare old and new groups
             if($nSuperID != $oSuperID && $nSuperID != null){
-                $oSuperID == $nSuperID;
+                $oSuperID = $nSuperID;
             }
             if($nDocID != $oDocID && $nDocID != null){
-                $oDocID == $nDocID;
+                $oDocID = $nDocID;
             }
             if($nGroup1 != $oGroup1 && $nGroup1 != null){
-                $oGroup1 == $nGroup1;
+                $oGroup1 = $nGroup1;
             }
             if($nGroup2 != $oGroup2 && $nGroup2 != null){
-                $oGroup2 == $nGroup2;
+                $oGroup2 = $nGroup2;
             }
             if($nGroup3 != $oGroup3 && $nGroup3 != null){
-                $oGroup3 == $nGroup3;
+                $oGroup3 = $nGroup3;
             }
             if($nGroup4 != $oGroup4 && $nGroup4 != null){
-                $oGroup4 == $nGroup4;
+                $oGroup4 = $nGroup4;
             }
             // send all the data
             DB::table('roster')->where('date',$request->input('frmDateReg'))
