@@ -395,5 +395,30 @@ class MainController extends Controller
     }
 
 
+
+//     // Redirect to correct Home Page based on Role
+//     public function goBack(Request $request) {
+//         $user = DB::table('accounts')->where
+//         ('RoleID'== 1);
+
+//         // checks if their account is Admin
+//         if($user->roleID == 1){
+//             return view('adminIndex');
+//         };
+//         // checks if their account is Supervisor
+//         if($user->roleID == 2){
+//             return view('superIndex');
+//         };
+
+//          // redirect to correct home page based on role
+//          if($roleID == 1){
+//              return redirect('/adminIndex');
+//          }
+//          if($roleID == 2){
+//              return redirect('/superIndex');
+//          }
+// }
+
+
 }
 
