@@ -25,6 +25,7 @@ Route::post('/doctorAppt', [MainController::class, 'postDoctorAppt']);
 Route::get('/patientHome', [MainController::class, 'getPatientHome']);
 
 Route::get('/employee', [MainController::class, 'getEmployee']);
+Route::post('/employee', [MainController::class, 'postEmployee']);
 
 Route::get('/patients', [MainController::class, 'getPatients']);
 
