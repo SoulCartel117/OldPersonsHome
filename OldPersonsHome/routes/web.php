@@ -17,6 +17,7 @@ use App\http\Controllers\MainController;
 Route::get('/', [MainController::class, 'getHome']);
 
 Route::get('/patientAdditionalInfo', [MainController::class, 'getPatientAdditionalInfo']);
+Route::post('/patientAdditionalInfo', [MainController::class, 'postPatientAdditionalInfo']);
 
 Route::get('/doctorAppt', [MainController::class, 'getDoctorAppt']);
 Route::post('/doctorAppt', [MainController::class, 'postDoctorAppt']);
@@ -24,12 +25,14 @@ Route::post('/doctorAppt', [MainController::class, 'postDoctorAppt']);
 Route::get('/patientHome', [MainController::class, 'getPatientHome']);
 
 Route::get('/employee', [MainController::class, 'getEmployee']);
+Route::post('/employee', [MainController::class, 'postEmployee']);
 
 Route::get('/patients', [MainController::class, 'getPatients']);
 
 Route::get('/roster', [MainController::class, 'getRoster']);
 
 Route::get('/newRoster', [MainController::class, 'getNewRoster']);
+Route::post('/newRoster', [MainController::class, 'postNewRoster']);
 
 Route::get('/doctorHome', [MainController::class, 'getDoctorHome']);
 

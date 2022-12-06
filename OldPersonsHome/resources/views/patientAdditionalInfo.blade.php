@@ -12,28 +12,37 @@
 
     <div class="mainDiv">
         <div class="leftDiv">
-            <form action="">
+            <form action="/patientAdditionalInfo" method="POST">
+            @csrf
                 <label for="pid">Patient ID</label>
                 <input type="text" id="pid" name="pid"><br><br>
 
                 <label for="gid">Group</label>
                 <input type="text" id="gid" name="gid"><br><br>
 
-                <label for="gid">Admission Date</label>
-                <input type="text" id="gid" name="gid"><br><br>
+                <label for="did">Doctor ID</label>
+                <select name="doctorID" id="did">
+                    
+                </select>
+
+                <input type="submit" value="Submit">
+                <input type="submit" value="Cancel">
 
             </form>
         </div>
             
         <div class="rightDiv">
-            <label for="pid">Patient Name</label>
-            <input type="text" id="pid" name="pid"><br><br>
+            <form action="/patientAdditionalInfo" method="POST">
+                <label for="pid">Patient Name</label>
+                <input type="text" id="pid" name="pid"><br><br>
+            </form>
         </div>
     </div>
 
     <div class="buttonDiv">
-        <input type="submit" value="Submit">
-        <input type="submit" value="Cancel">
+        <form action="/patientAdditionalInfo" method="POST">
+
+        </form>
     </div>
     <div>
         <script>
