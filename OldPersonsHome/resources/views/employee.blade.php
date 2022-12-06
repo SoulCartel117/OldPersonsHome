@@ -8,29 +8,41 @@
     <title>Employee</title>
 </head>
 <body>
-    <p> <h1>Employee</h1> </p>
+    <p> <h1 class="title">Employee</h1> </p>
 
-<section class="search">
-    <form class="example" action="action_page.php">
-        <input type="text" placeholder="Search.." name="search">
-        <button type="submit"><i class="fa fa-search">Search</i></button>
-    </form>
-</section><br>
+    <section class="search">
+        <form class="example" action="employee" method="post">
+            <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+            <input class="searchBar" type="text" placeholder="Search ID.." name="searchID">
+             
+            <input class="searchBar" type="text" placeholder="Search Last Name.." name="searchName">  
+       
+            <input class="searchBar" type="text" placeholder="Search Role.." name="searchRole">
+        
+            <input class="searchBar" type="text" placeholder="Search Salary" name="searchSalary"><br><br>
+       
+            <button class="searchSubmit" type="submit"><i class="fa fa-search">Search</i></button>
+        </form>
+    </section><br>
 
     <section class="top">
         <table class="employeeInfo">
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Salary</th>
+                <th style="width: 150px;">ID</th>
+                <th style="width: 150px;">Name</th>
+                <th style="width: 150px;">Role</th>
+                <th style="width: 150px;">Salary</th>
             </tr>
+            
+            @foreach ($Emps as $emp)
             <tr>
-                <td>something</td>
-                <td>will</td>
-                <td>go</td>
-                <td>here</td>
+                <td class="dataRows">{{ $emp->ID }}</td>
+                <td class="dataRows">{{ $emp->FName }} {{ $emp->LName }}</td>
+                <td class="dataRows">{{ $emp->role}}</td>
+                <td class="dataRows">{{ $emp->salary }}</td>
             </tr>
+            @endforeach
+            
         </table>
     
         <div class="mainDiv">
