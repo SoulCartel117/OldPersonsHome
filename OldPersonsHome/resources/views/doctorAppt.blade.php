@@ -11,8 +11,8 @@
 <body>
     <p> <h1>Doctor's Appointment</h1> </p>
     <?php 
-    $test = DB::table('accounts')->select('*')->whereroleidAndIsregapproved(5, 1)->get(); 
-    $test1 = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID', 'accounts.FName', 'accounts.LName', 'roster.date')->get(); 
+        $test = DB::table('accounts')->select('*')->whereroleidAndIsregapproved(5, 1)->get(); 
+        $test1 = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID', 'accounts.FName', 'accounts.LName', 'roster.date')->get(); 
     ?>
     <div class="mainDiv">
         <div class="leftDiv">
@@ -23,9 +23,7 @@
             
                 <label for="date">Date</label>
                 <input type="date" id="date" name="date" onchange="doctorFinder()" min="<?php echo date("Y-m-d");?>" value="<?php echo date("Y-m-d");?>"><br><br>
-            </form>
-
-            <form action="/doctorAppt" method="post">
+          
                 <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <label for="did">Doctor</label>
                 <select name="did">
@@ -34,7 +32,7 @@
                 </select><br><br>
                 <label for="cid">Comment</label><br><br>
                 <textarea id="cid" name="cid" maxlength="240" placeholder="Enter Comment Here..." autofocus></textarea>
-                <input class='okSubmit' type='submit' id='11' name='searchDr' value='OK'>
+                <input class='okSubmit' type='submit' id='11' name='enterAppt' value='OK'>
             </form>
         </div>
 
@@ -44,7 +42,7 @@
             <input type="text" id="name" name="" value="" disabled><br><br>
         </div>
     </div>
-
+    
     <div class="buttonDiv">
         <input type="submit" value="Submit">
         <input type="submit" value="Cancel">
@@ -75,7 +73,6 @@
 
     function doctorFinder(){
         var test1 = JSON.parse('<?php echo json_encode($test1) ?>');
-        console.log(test1);
         date = document.getElementById("date").value;
         for(x=0; x<test1.length; x++){
             if(date == test1[x].date){
@@ -89,6 +86,5 @@
             }
         }
     }
-
 </script>
 </html>
