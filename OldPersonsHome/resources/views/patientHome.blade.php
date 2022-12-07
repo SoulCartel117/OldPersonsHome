@@ -8,34 +8,28 @@
     <title>Patient's Home</title>
 </head>
 <body>
+    <?php 
+        $test = DB::table('accounts')->select('*')->whereroleidAndIsregapproved(5, 1)->get(); 
+        $test1 = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID', 'accounts.FName', 'accounts.LName', 'roster.date')->get(); 
+    ?>
     <p> <h1>Patient's Home</h1> </p>
 
     <div class="mainDiv">
         <div class="leftDiv">
-            <form action="">
+            <form action="/patientHome">
+                <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <label for="pid">Patient ID</label>
-                <input type="text" id="pid" name="pid"><br><br>
+                <input type="text" id="pid" name="pid" onchange="nameFinder()"><br><br>
 
                 <label for="date">Date</label>
-                <input type="text" name="frmDateReg" required id="frmDate" value=""><br><br>
-                <script>
-                    function getDate(){
-                        var todaydate = new Date();
-                        var day = todaydate.getDate();
-                        var month = todaydate.getMonth() + 1;
-                        var year = todaydate.getFullYear();
-                        var datestring = month + "/" + day + "/" + year;
-                        document.getElementById("frmDate").value = datestring;
-                    } 
-                    getDate(); 
-                </script>
-                
+                <input type="date" name="frmDateReg" required id="frmDate" value="<?php echo date("Y-m-d");?>"><br><br>
+               
             </form>
         </div>
             
         <div class="rightDiv">
             <label for="pid">Patient Name</label>
-            <input type="text" id="pid" name="pid"><br><br>
+            <input type="text" id="name" name="pid"><br><br>
         </div>
     </div>
 
@@ -69,4 +63,19 @@
     </section>
     <div><button type="button" class="cancelbtn" name="Logout"><a href="/login"</a>Logout</div>
 </body>
+<script>
+    function nameFinder(){
+        var test = JSON.parse('<?php echo json_encode($test) ?>');
+        patientID = document.getElementById("pid").value;
+        for(x=0; x<test.length; x++){
+            if(patientID == test[x].ID){
+            document.getElementById("name").value = test[x].FName + " " + test[x].LName;
+            break;
+            }
+            else{
+                document.getElementById("name").value = "";
+            }
+        }
+    }
+</script>
 </html>

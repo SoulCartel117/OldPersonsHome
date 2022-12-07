@@ -81,12 +81,7 @@
 
             </div>
             <div>
-                <script>
-                    function goBack() {
-                      window.history.back();
-                    }
-                    </script>
-                <button onclick="goBack()">Go Back</button>
+                <button onclick="history.go(-2);">Go Back</button>
             </div>
             <footer class="footer">
 

@@ -48,6 +48,20 @@
   width: auto;
 }
 
+a {
+  padding: 0%;
+  background-color: #f44336;
+  border: black 2px;
+}
+
+.flex-containerbtn > a {
+  background-color: #f1f1f1;
+  margin: 65px;
+  padding: 20px;
+  font-size: 25px;
+  width: auto;
+}
+
 button {
   background-color: #04AA6D;
   color: white;
@@ -101,8 +115,12 @@ h1{
                 </div>
                 <br>
                 <div class="flex-containerbtn">
-                    <div><button type="button" class="cancelbtn" name="Cancel">Cancel</div>
-                    <div><input type="submit" value="Login" class="cancelbtn" name="Login"></div>
+                    <div>
+                      <a href="/registration">Register
+                    </div>
+                    <div>
+                      <input type="submit" value="Login" class="cancelbtn" name="Login">
+                    </div>
                 </div>
             </form>
             </div>

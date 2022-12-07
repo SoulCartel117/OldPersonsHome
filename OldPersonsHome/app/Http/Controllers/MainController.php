@@ -6,6 +6,7 @@ use App\Models\accounts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class MainController extends Controller
@@ -58,74 +59,141 @@ class MainController extends Controller
     }
 
     public function getDoctorAppt(Request $request){
-        // patient1 is button. 
-        $patient1 = $request->input("searchPt");
-        // initialize $pid to assign value later
-        $pid;
-        //if patient1(button) is not null aka it's been pressed, then make $pid = input name='pid'
-        if($patient1 != null){
-            $pid = $request->input('pid');
-            } 
-        else {
-            $pid = 2;
-        }
+        return view('doctorAppt');
+    }
 
-        //SELECT * FROM `accounts` where roleID = 5 (patient) and ID = $pid and isRegApproved = 1
-        //populates box on side once patient id is entered
-        $pt = DB::table('accounts')->select('*')->whereroleidAndIsregapprovedAndId(5, 1, $pid)->get();
-        $pt = json_decode(json_encode($pt), true);
-
+    public function postDoctorAppt(Request $request){
         // searchDate is button
-        $searchDate = $request->input("searchDate");
-        //initialize $date to assign value later
-        $date;
-        //if searchDate(button) is not null aka it's been pressed, then make $date = input name='date' else make it today's date
-        if($searchDate != null){
-            $date = $request->input('date');
-        }else{
-            $date = date("Y-m-d");
-        }
-        
-        // doctor is button
-        $doctor = $request->input("searchDr");
-
-        //joins tables to populate select/option with doctors working that date 
-        $data = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID', 'accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
-        $data = json_decode(json_encode($data), true);
-
+        $date = $request->input("date");
         //get doctorID to insert into appt table
         $doctorID = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID')->where('roster.date', '=', $date)->get();
+        //$doctorID = json_decode(json_encode($doctorID), true);
         //get supervisorID to insert into appt table
         $supervisorID = DB::table('accounts')->join('roster', 'roster.supervisorID',  '=', 'accounts.ID')->select('roster.supervisorID')->where('roster.date', '=', $date)->get();
-        //get patient group, number select groupID from accounts where id = pid;
-        $group = DB::table('accounts')->select('groupID')->where('ID', '=', 48)->get();
-        
-        //get caregiver to insert into appt table
-        if ($group == 1){
-            //SELECT a.FName FROM accounts a join roster r on r.group1 = a.ID join caregiver c USING (date) where r.date = '2022-12-05';
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
-        } elseif($group == 2){
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
-        } elseif($group == 3){
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
-        } else {
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->joinUsing('caregiver', 'date')->select('accounts.FName')->where('roster.date', '=', $date)->get();
-        } 
-        
-        
-        
-        //$insert =DB::table();
+        //$supervisorID = json_decode(json_encode($supervisorID), true);
 
+        $pid = $request->input("pid");
+
+        //get patient group, number select groupID from accounts where id = pid;
+        $group = DB::table('patient')->select('groupID')->where('patientID', '=', $pid)->get();
+        $group = json_decode(json_encode($group), true);
+
+        //$group is an array. This pulls the value out of that array and assigns it to groupID
+        foreach($group[0] as $v){
+            $groupID = $v;
+        }
         
-        return view('doctorAppt')->with('patient', $pt)->with('date', $date)->with('doctors', $data);
+        //initialize caregiver
+        $caregiver;
+        // get caregiver to insert into appt table
+        if ($groupID == 1){
+            // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->select('accounts.ID')->where('roster.date', '=', $date)->get();
+        } elseif($groupID == 2){
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->select('accounts.ID')->where('roster.date', '=', $date)->get();
+        } elseif($groupID == 3){
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->select('accounts.ID')->where('roster.date', '=', $date)->get();
+        } elseif ($groupID == 4) {
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->select('accounts.ID')->where('roster.date', '=', $date)->get();
+        } 
+
+        //$caregiver = json_decode(json_encode($caregiver), true);
+        $comment = $request->input("cid");
+
+        DB::table('appointments')->insert([
+            'supervisorID' => $supervisorID[0]->supervisorID,
+            'doctorID' => $doctorID[0]->doctorID,
+            'patientID' => $pid,
+            'caregiverID' => $caregiver[0]->ID,
+            'comment' => $comment,
+            'date' => $date
+        ]);
+
+        return redirect('/doctorAppt');
     }
 
     public function getPatientHome(){
+
+
         return view('patientHome');
     }
 
     public function getEmployee(){
-        return view('employee');
+        // get the employees info
+        $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        return view('employee',['Emps'=>$emps]);
+    }
+
+    public function postEmployee(Request $request){
+        //check to see what search boxs have inputs
+        if($request->input('searchID') != NULL && $request->input('searchName') != NULL && $request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchID') != NULL && $request->input('searchName') != NULL && $request->input('searchRole') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->get();
+        }
+        elseif($request->input('searchID') != NULL && $request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchName') != NULL && $request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchName') != NULL && $request->input('searchID') != NULL && $request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchName') != NULL && $request->input('searchRole') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->get();
+        }
+        
+        return view('employee',['Emps'=>$emps]);
     }
 
     public function getPatients(){
@@ -184,7 +252,7 @@ class MainController extends Controller
         $rosterDate = $caregiver = DB::table('roster')->where
         ('date', $request->input('frmDateReg'))->get();
 
-        $DateCount = DB::select("select count(*) as count from roster where date = '2022-12-06'")[0];
+        $DateCount = DB::select("select count(*) as count from roster where date = ".$request->input('frmDateReg').";")[0];
         $DateCount = json_decode(json_encode($DateCount), true)["count"];
         
         if($DateCount <= 1){
@@ -341,7 +409,7 @@ class MainController extends Controller
             'DOB' => $request->input('DOB')
         ]);
 
-        // then we regrab that perviously entered information 
+        // then we regrab that previously entered information 
         $user = DB::table('accounts')->where
             ('Email', $request->input('email'))->first();
 
@@ -408,13 +476,38 @@ class MainController extends Controller
             return redirect('/patientHome');
         }
         if($role == 6){
-            return redirect('/famlyMemberHome');
+            return redirect('/familyMemberHome');
         }
 
         // return login page if nothing else
         return redirect('/login');
 
     }
+
+
+
+//     // Redirect to correct Home Page based on Role
+//     public function goBack(Request $request) {
+//         $user = DB::table('accounts')->where
+//         ('RoleID'== 1);
+
+//         // checks if their account is Admin
+//         if($user->roleID == 1){
+//             return view('adminIndex');
+//         };
+//         // checks if their account is Supervisor
+//         if($user->roleID == 2){
+//             return view('superIndex');
+//         };
+
+//          // redirect to correct home page based on role
+//          if($roleID == 1){
+//              return redirect('/adminIndex');
+//          }
+//          if($roleID == 2){
+//              return redirect('/superIndex');
+//          }
+// }
 
 
 }
