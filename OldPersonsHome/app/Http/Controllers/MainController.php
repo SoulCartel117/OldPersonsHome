@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use PhpParser\Node\Expr\FuncCall;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class MainController extends Controller
@@ -127,10 +128,83 @@ class MainController extends Controller
             ->where('accounts.roleID','<', 5)
             ->get();
 
-        return view('employee',['Emps'=>$emps]);
+        // get the roles for the drop down
+        $roleIDs = DB::table('roles')
+            ->select('role','roleID')->get();
+
+        // get the ids for the drop down
+        $empsIDs = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the names for drop down
+        $empsNames = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('FName', 'LName')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the salaries for drop down
+        $empsSalaries = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries]);
     }
 
-    public function postEmployee(Request $request){
+    public function updateEmpSalary(Request $request){
+
+
+
+        // set new salary for employee
+         DB::table('employee')
+            ->where('employeeID',  $request->input('SalaryID'))
+            ->update(['salary' => $request->input('sid')]);
+
+        // get the employees info
+        $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the roles for the drop down
+        $roleIDs = DB::table('roles')
+            ->select('role','roleID')->get();
+
+        // get the ids for the drop down
+        $empsIDs = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the names for drop down
+        $empsNames = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('FName', 'LName')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the salaries for drop down
+        $empsSalaries = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+
+         return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries]);
+    }
+
+    public function searchEmployee(Request $request){
+
+
         //check to see what search boxs have inputs
         if($request->input('searchID') != NULL && $request->input('searchName') != NULL && $request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
             $emps = DB::table('accounts')
@@ -192,8 +266,119 @@ class MainController extends Controller
             ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
             ->get();
         }
+        elseif($request->input('searchName') != NULL && $request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->get();
+        }
+        elseif($request->input('searchName') != NULL && $request->input('searchSalaray') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->get();
+        }
+        elseif($request->input('searchRole') != NULL && $request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->get();
+        }
+        elseif($request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->get();
+        }
+        elseif($request->input('searchSalary') != NULL && $request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchRole') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->get();
+        }
+        elseif($request->input('searchName') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->get();
+        }
+        elseif($request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->get();
+        }
+        else{
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+        }
+    
+
+        // get the roles for the drop down
+        $roleIDs = DB::table('roles')
+            ->select('role','roleID')->get();
+
+        // get the ids for the drop down
+        $empsIDs = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the names for drop down
+        $empsNames = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('FName', 'LName')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the salaries for drop down
+        $empsSalaries = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary')
+            ->where('accounts.roleID','<', 5)
+            ->get();
         
-        return view('employee',['Emps'=>$emps]);
+        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries]);
     }
 
     public function getPatients(){
