@@ -30,6 +30,7 @@ Route::get('/patients', [MainController::class, 'getPatients']);
 Route::get('/roster', [MainController::class, 'getRoster']);
 
 Route::get('/newRoster', [MainController::class, 'getNewRoster']);
+Route::post('/newRoster', [MainController::class, 'postNewRoster']);
 
 Route::get('/doctorHome', [MainController::class, 'getDoctorHome']);
 
