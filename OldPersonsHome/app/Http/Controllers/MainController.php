@@ -38,12 +38,21 @@ class MainController extends Controller
     }
     
     public function getPatientAdditionalInfo(){
-        return view('patientAdditionalInfo');
+
+        //GET ALL THE DOCTORS
+        $doctor = DB::table('accounts')->where
+        ('roleID', 3)->get();
+
+        $group = DB::table('groups')->get();
+
+        return view('patientAdditionalInfo',['Doctors'=>$doctor, 'Groups'=>$group]);
+       
     }
     public function postPatientAdditionalInfo(Request $request){
+        var_dump($request->input('gid'));
         DB::table('patient')
-            ->where('groupID', 'gid')
-            ->update(['groupID' => 'gid']);
+            ->where('patientID', $request->input('pid'))
+            ->update(['groupID' => $request->input('gid'), 'doctorID' => $request->input('did')]);
 
         return redirect('/patientAdditionalInfo');
     }

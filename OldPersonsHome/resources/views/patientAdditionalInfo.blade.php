@@ -17,12 +17,19 @@
                 <label for="pid">Patient ID</label>
                 <input type="text" id="pid" name="pid"><br><br>
 
-                <label for="gid">Group</label>
-                <input type="text" id="gid" name="gid"><br><br>
+                <label for="did">Doctor</label>
+                <select name="did" id="did">
+                    @foreach ($Doctors as $doctor)
+                        <option name="did" value="{{ $doctor->ID }}"> {{ $doctor->FName }} {{$doctor->LName}} </option>
+                    @endforeach
+                </select>
+                <br><br>
 
-                <label for="did">Doctor ID</label>
-                <select name="doctorID" id="did">
-                    
+                <label for="gid">Group ID</label>
+                <select name="gid" id="gid">
+                    @foreach ($Groups as $group)
+                        <option name="gid" value="{{ $group->groupID }}"> {{ $group->groupID }} </option>
+                    @endforeach
                 </select>
 
                 <input type="submit" value="Submit">

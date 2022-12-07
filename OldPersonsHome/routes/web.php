@@ -46,7 +46,7 @@ Route::get('/payment', [MainController::class, 'getPayment']);
 Route::get('/homepage', [MainController::class, 'getHomepage']);
 
 Route::get('/registration', [MainController::class, 'getRegistration']);
-Route::get('/registration', [MainController::class, 'registration']);
+Route::post('/registration', [MainController::class, 'registration']);
 
 Route::get('/roles', [MainController::class, 'getRoles']);
 
