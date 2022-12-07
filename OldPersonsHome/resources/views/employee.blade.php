@@ -11,16 +11,36 @@
     <p> <h1 class="title">Employee</h1> </p>
 
     <section class="search">
-        <form class="example" action="employee" method="post">
+        <form class="example" action="/employeeSearch" method="post">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-            <input class="searchBar" type="text" placeholder="Search ID.." name="searchID">
-             
-            <input class="searchBar" type="text" placeholder="Search Last Name.." name="searchName">  
-       
-            <input class="searchBar" type="text" placeholder="Search Role.." name="searchRole">
+            <select class="searchBar" name="searchID" id="searchID">
+                <option value="" disabled selected>Select a ID</option>
+                @foreach ($EmpIDs as $empID)
+                    <option value="{{ $empID->ID }}"> {{ $empID->ID}}</option>
+                @endforeach
+            </select>
+
+            <select class="searchBar" name="searchName" id="searchName">
+                <option value="" disabled selected>Select a Name</option>
+                @foreach ($EmpsNames as $empName)
+                    <option value="{{ $empName->LName }}">{{ $empName->FName }} {{ $empName->LName }}</option>
+                @endforeach
+            </select>
+
+            <select class="searchBar" name="searchRole" id="searchRole">
+                <option value="" disabled selected>Select a Role</option>
+                @foreach ($RoleIDs as $role)
+                    <option value="{{ $role->roleID }}"> {{ $role->role }}</option>
+                @endforeach
+            </select>
         
-            <input class="searchBar" type="text" placeholder="Search Salary" name="searchSalary"><br><br>
-       
+           <select class="searchBar" name="searchSalary" id="searchSalary">
+                <option value="" disabled selected>Select a Salary</option>
+                @foreach ($EmpSalaries as $salary)
+                    <option value="{{ $salary->salary }}"> {{ $salary->salary }}</option>
+                @endforeach
+            </select>
+
             <button class="searchSubmit" type="submit"><i class="fa fa-search">Search</i></button>
         </form>
     </section><br>
@@ -47,21 +67,30 @@
     
         <div class="mainDiv">
             <div class="leftDiv">
-                <form action="">
+                <form action="/employee" method="post">
                     <label for="eid">Emp ID</label>
-                    <input type="text" id="eid" name="eid"><br><br>
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <select class="mainDivinput" name="SalaryID">
+                        <option value="" disabled selected>Select a ID</option>
+                        @foreach ($EmpIDs as $empID)
+                            <option value="{{ $empID->ID }}"> {{ $empID->ID}}</option>
+                        @endforeach
+                    </select>
+                    <br><br>
 
                     <label for="sid">New Salary</label>
-                    <input type="text" id="sid" name="sid"><br><br>
+                    <input class="mainDivinput" type="text" id="sid" name="sid"><br><br>
+
+                    <div class="buttonDiv">
+                        <input type="submit" value="Submit">
+                        <input type="submit" value="Cancel">
+                    </div>
                 </form>
             </div>
         </div>
     </section>
     
-    <div class="buttonDiv">
-        <input type="submit" value="Submit">
-        <input type="submit" value="Cancel">
-    </div>
+    
     <div>
         <script>
             function goBack() {
