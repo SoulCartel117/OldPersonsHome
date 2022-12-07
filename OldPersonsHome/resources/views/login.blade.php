@@ -118,7 +118,9 @@ h1{
                     <div>
                       <a href="/registration">Register
                     </div>
-                    <div><input type="submit" value="Login" class="cancelbtn" name="Login"></div>
+                    <div>
+                      <input type="submit" value="Login" class="cancelbtn" name="Login">
+                    </div>
                 </div>
             </form>
             </div>
