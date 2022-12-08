@@ -40,6 +40,7 @@ Route::get('/doctorHome', [MainController::class, 'getDoctorHome']);
 Route::get('/patientOfDoctor', [MainController::class, 'getPatientOfDoctor']);
 
 Route::get('/caregiverHome', [MainController::class, 'getCaregiverHome']);
+Route::post('/caregiverHome', [MainController::class, 'postCaregiverHome']);
 
 Route::get('/familyMemberHome', [MainController::class, 'getFamilyMemberHome']);
 

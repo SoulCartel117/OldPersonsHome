@@ -153,19 +153,39 @@ class MainController extends Controller
             ->where('accounts.roleID','<', 5)
             ->get();
 
-        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries]);
+        // get all the employees 
+        $empsNoSalary = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->select('roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries, 'EmpsNoSalary'=>$empsNoSalary]);
     }
 
     public function updateEmpSalary(Request $request){
+        // check if emp has a salary or not
+        $isSalary = DB::select("select count(*) as count from accounts join employee  on accounts.ID = employee.employeeID where accounts.ID = ".($request->input('SalaryID')).";")[0];
+        $isSalary = json_decode(json_encode($isSalary), true)["count"];
 
-
-
-        // set new salary for employee
+        if($isSalary == 0){
+            DB::table('employee')->insert(['employeeID' => $request->input('SalaryID'), 'salary'=> $request->input('sid')]);
+        }
+        else{
+            // set new salary for employee
          DB::table('employee')
             ->where('employeeID',  $request->input('SalaryID'))
             ->update(['salary' => $request->input('sid')]);
+        }
 
-        // get the employees info
+        // get all the employees 
+        $empsNoSalary = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->select('roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the employees info with salaries
         $emps = DB::table('accounts')
             ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
             ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
@@ -199,7 +219,7 @@ class MainController extends Controller
             ->get();
 
 
-         return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries]);
+         return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries, 'EmpsNoSalary'=>$empsNoSalary]);
     }
 
     public function searchEmployee(Request $request){
@@ -351,7 +371,13 @@ class MainController extends Controller
             ->where('accounts.roleID','<', 5)
             ->get();
         }
-    
+        
+        // get all the employees 
+        $empsNoSalary = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->select('roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
 
         // get the roles for the drop down
         $roleIDs = DB::table('roles')
@@ -378,7 +404,7 @@ class MainController extends Controller
             ->where('accounts.roleID','<', 5)
             ->get();
         
-        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries]);
+        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries, 'EmpsNoSalary'=>$empsNoSalary]);
     }
 
     public function getPatients(){
@@ -434,13 +460,14 @@ class MainController extends Controller
 
     public function postNewRoster(Request $request){
         //check if roster exist for the date
-        $rosterDate = $caregiver = DB::table('roster')->where
+        $rosterDate = DB::table('roster')->where
         ('date', $request->input('frmDateReg'))->get();
 
-        $DateCount = DB::select("select count(*) as count from roster where date = ".$request->input('frmDateReg').";")[0];
-        $DateCount = json_decode(json_encode($DateCount), true)["count"];
-        
-        if($DateCount <= 1){
+        // check roster to see if we already have a roster for that date
+        $DateCount = DB::table('roster')->where('date', '=', $request->input('frmDateReg'))->get();
+        $DateCount = $DateCount->count();
+
+        if($DateCount >= 1){
             //get the new roster info
             $nSuperID = $request->input('Supervisor');
             $nDocID = $request->input('Doctor');
@@ -450,6 +477,7 @@ class MainController extends Controller
             $nGroup4 = $request->input('caregiver4');
 
             //get the older roster info
+
             $oSuperID = $rosterDate[0]->supervisorID;
             $oDocID = $rosterDate[0]->doctorID;
             $oGroup1 = $rosterDate[0]->group1;
@@ -524,6 +552,13 @@ class MainController extends Controller
     }
 
     public function getCaregiverHome(){
+
+        // get all the patients for the group that the caregiver is working for that day
+        $pid = $_SESSION['user1']
+        return view('caregiverHome');
+    }
+
+    public function postCaregiverHome(){
         return view('caregiverHome');
     }
 

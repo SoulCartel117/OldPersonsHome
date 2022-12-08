@@ -72,8 +72,8 @@
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                     <select class="mainDivinput" name="SalaryID">
                         <option value="" disabled selected>Select a ID</option>
-                        @foreach ($EmpIDs as $empID)
-                            <option value="{{ $empID->ID }}"> {{ $empID->ID}}</option>
+                        @foreach ($EmpsNoSalary as $empsNoSalary)
+                            <option value="{{ $empsNoSalary->ID }}"> {{ $empsNoSalary->ID}}</option>
                         @endforeach
                     </select>
                     <br><br>
