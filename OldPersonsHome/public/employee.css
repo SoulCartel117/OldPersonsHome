@@ -88,9 +88,10 @@ label {
     border-radius: 0 8px 0 0;
   }
 
-  .mainDiv input {
+  .mainDivinput {
     margin-left: 5px;
     border: 6px solid #1982ff;
+    width: 200px;
   }
 
   .buttonDiv {
