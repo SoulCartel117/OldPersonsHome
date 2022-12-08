@@ -679,7 +679,26 @@ class MainController extends Controller
     public function getCaregiverHome(){
 
         // get all the patients for the group that the caregiver is working for that day
-        $pid = $_SESSION['user1']
+        $pid = $_SESSION['user1'][0]['ID'];
+
+        // get the roster for current date and PID in group 1,2,3,4
+        $Roster = DB::table('roster')
+            ->where('date', '=' , date('Y-d-m'))
+            ->where('group1', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'accounts.ID', '=', 'meals.patientID')
+            ->join('medicationtaken', 'accounts.ID', '=', 'medicationtaken.patientID')
+            ->where('meals.date', '=' , date('Y-d-m'))
+            ->where('patient.group', '=', '1')
+            ->get();
+        }
+        
+
         return view('caregiverHome');
     }
 
