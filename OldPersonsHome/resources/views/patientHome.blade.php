@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,31 +9,27 @@
     <title>Patient's Home</title>
 </head>
 <body>
-    <?php 
-        $test = DB::table('accounts')->select('*')->whereroleidAndIsregapproved(5, 1)->get(); 
-        $test1 = DB::table('accounts')->join('roster', 'roster.doctorID',  '=', 'accounts.ID')->select('roster.doctorID', 'accounts.FName', 'accounts.LName', 'roster.date')->get(); 
-    ?>
     <p> <h1>Patient's Home</h1> </p>
+
 
     <div class="mainDiv">
         <div class="leftDiv">
-            <form action="/patientHome">
-                <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+            <form action="/patientHome" method="get">
                 <label for="pid">Patient ID</label>
-                <input type="text" id="pid" name="pid" onchange="nameFinder()"><br><br>
+                <input type="text" id="pid" name="pid" value="<?php echo $_SESSION['user1'][0]['ID'] ;?> " disabled><br><br>
 
                 <label for="date">Date</label>
-                <input type="date" name="frmDateReg" required id="frmDate" value="<?php echo date("Y-m-d");?>"><br><br>
+                <input type="date" name="fahim" required id="frmDate" value="<?php echo date("Y-m-d");?>"><br><br>
                
             </form>
         </div>
-            
+            <p></p>
         <div class="rightDiv">
             <label for="pid">Patient Name</label>
-            <input type="text" id="name" name="pid"><br><br>
+            <input type="text" id="name" name="pid" value=" <?php echo $_SESSION['user1'][0]['FName'].' '. $_SESSION['user1'][0]['LName'] ?>" disabled><br><br>
         </div>
     </div>
-
+  
     <section class="bottom">
         <table class="patientInfo">
             <tr>
@@ -47,35 +44,62 @@
                 <th>Dinner</th>
             </tr>
             <tr>
-                <td>some php/js to input name</td>
+                <td></td>
                 <td>
                     <input id="checkbox-1" type="checkbox" checked disabled />
                 </td>
-                <td>some php/js to input name</td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
+                <td></td>
+
+                <td>
+                    <?php if($medicationTaken[0]['morningMed'] == 1){
+                        echo "<input id='checkbox-1' type='checkbox' checked disabled />";
+                    } else {
+                        echo "<input id='checkbox-1' type='checkbox' disabled />";
+                    }?>
+                </td>
+
+                <td>
+                    <?php if($medicationTaken[0]['afternoonMed'] == 1){
+                        echo "<input id='checkbox-1' type='checkbox' checked disabled />";
+                    } else {
+                        echo "<input id='checkbox-1' type='checkbox' disabled />";
+                    }?>
+                </td>
+
+                <td>
+                    <?php if($medicationTaken[0]['nightMed'] == 1){
+                        echo "<input id='checkbox-1' type='checkbox' checked disabled />";
+                    } else {
+                        echo "<input id='checkbox-1' type='checkbox' disabled />";
+                    }?>
+                </td>
+
+                <td>
+                    <?php if($meals[0]['breakfast'] == 1){
+                        echo "<input id='checkbox-1' type='checkbox' checked disabled />";
+                    } else {
+                        echo "<input id='checkbox-1' type='checkbox' disabled />";
+                    }?>
+                </td>
+
+                <td>
+                    <?php if($meals[0]['lunch'] == 1){
+                        echo "<input id='checkbox-1' type='checkbox' checked disabled />";
+                    } else {
+                        echo "<input id='checkbox-1' type='checkbox' disabled />";
+                    }?>
+                </td>
+
+                <td>
+                    <?php if($meals[0]['dinner'] == 1){
+                        echo "<input id='checkbox-1' type='checkbox' checked disabled />";
+                    } else {
+                        echo "<input id='checkbox-1' type='checkbox' disabled />";
+                    }?>
+                </td>
             </tr>
         </table>
     </section>
-    <div><button type="button" class="cancelbtn" name="Logout"><a href="/login"</a>Logout</div>
+    <div><button type="button" class="cancelbtn" name="Logout"><a href="/login"></a>Logout</div>
 </body>
-<script>
-    function nameFinder(){
-        var test = JSON.parse('<?php echo json_encode($test) ?>');
-        patientID = document.getElementById("pid").value;
-        for(x=0; x<test.length; x++){
-            if(patientID == test[x].ID){
-            document.getElementById("name").value = test[x].FName + " " + test[x].LName;
-            break;
-            }
-            else{
-                document.getElementById("name").value = "";
-            }
-        }
-    }
-</script>
 </html>
