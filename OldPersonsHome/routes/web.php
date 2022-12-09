@@ -22,10 +22,13 @@ Route::post('/patientAdditionalInfo', [MainController::class, 'postPatientAdditi
 Route::get('/doctorAppt', [MainController::class, 'getDoctorAppt']);
 Route::post('/doctorAppt', [MainController::class, 'postDoctorAppt']);
 
+Route::get('/patientHomeIndex', [MainController::class, 'patientIndex']);
+
 Route::get('/patientHome', [MainController::class, 'getPatientHome']);
 
 Route::get('/employee', [MainController::class, 'getEmployee']);
-Route::post('/employee', [MainController::class, 'postEmployee']);
+Route::post('/employeeSearch', [MainController::class, 'searchEmployee']);
+Route::post('/employee', [MainController::class, 'updateEmpSalary']);
 
 Route::get('/patients', [MainController::class, 'getPatients']);
 
@@ -39,6 +42,7 @@ Route::get('/doctorHome', [MainController::class, 'getDoctorHome']);
 Route::get('/patientOfDoctor', [MainController::class, 'getPatientOfDoctor']);
 
 Route::get('/caregiverHome', [MainController::class, 'getCaregiverHome']);
+Route::post('/caregiverHome', [MainController::class, 'postCaregiverHome']);
 
 Route::get('/familyMemberHome', [MainController::class, 'getFamilyMemberHome']);
 
@@ -67,7 +71,7 @@ Route::get('/docIndex', [MainController::class, 'docIndex']);
 
 Route::get('/careIndex', [MainController::class, 'careIndex']);
 
-Route::get('/patientHome', [MainController::class, 'patientIndex']);
+
 
 Route::get('/familyMemberHome', [MainController::class, 'famIndex']);
 

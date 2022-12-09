@@ -7,13 +7,118 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use PhpParser\Node\Expr\FuncCall;
 use Symfony\Contracts\Service\Attribute\Required;
+session_start();
+
+global $user1;
+
 
 class MainController extends Controller
 {
-
     public function getHome(){
         return view('welcome');
+    }
+
+    public function getRegistration(){
+        return view('registration');
+    }
+
+    
+    // registration
+    public function registration(Request $request){
+        // validates their inputs
+        $fields = $request->validate([
+            'email' => 'required|string|unique:accounts,Email'
+        ]);
+
+        // sends their information to the DB
+        DB::table('accounts')->insert([
+            'roleID' => $request->input('role'),
+            'FName' => $request->input('fname'),
+            'LName' => $request->input('lname'),
+            'Email' => $request->input('email'),
+            'phNo' => $request->input('phone'),
+            'password' => $request->input('password'),
+            'DOB' => $request->input('DOB')
+        ]);
+
+        // then we regrab that previously entered information 
+        $user = DB::table('accounts')->where
+            ('Email', $request->input('email'))->first();
+
+        // then we check if Role from $user is a patient and then update the em contact stuff
+        // we may want to added validation to ensure those fields are filled in 
+        if($request->input('role') == 5){
+            DB::table('familycode')->insert([
+                'patientID'=>$user->ID,
+                'familyCode' => $request->input('familyCode')
+            ]);
+            
+            // get FCID info we just inserted to update the patients table
+            $FCID = DB::table('familycode')->where
+            ('patientID', $user->ID)->first();
+
+            DB::table('patient')->insert([
+                'patientID'=>$user->ID,
+                'FCID' => $FCID->FCID,
+                'admissionDate' => (date('Y')."-".date('m')."-".date('d')),
+                'emContact' => $request->input('familyName'),
+                'emContactPhNo' => $request->input('familyPhone'),
+                'relationEmContact' => $request->input('familyRelation')
+            ]);
+        }
+
+        // redirects to the login page
+        return redirect('/login');
+    }
+
+
+    // Login 
+    public function loginPost(Request $request){
+        // get user info from DB on email
+        $user = DB::table('accounts')->where
+            ('Email', $request->input('email'))->first();
+
+        // check if user has correct password
+        if(!$user || ($request->input('password') != $user->password)){
+            return view('login', ['loginError'=>'Your email or username is incorrect']);
+        };
+
+        // checks if their account is approved
+        if($user->isRegApproved == NULL){
+            return view('login', ['loginError'=>'Your account is not approved']);
+        };
+
+        // get user role
+        $role = $user->roleID;
+
+        $user1 = DB::table('accounts')->select('*')->whereRoleidAndEmail($role, $request->input('email'))->get();
+        $user1 = json_decode(json_encode($user1), true);
+        $_SESSION['user1'] = $user1;
+
+        // redirect to correct home page based on role
+        if($role == 1){
+            return redirect('/adminIndex');
+        }
+        if($role == 2){
+            return redirect('/superIndex');
+        }
+        if($role == 3){
+            return redirect('/docIndex');
+        }
+        if($role == 4){
+            return redirect('/careIndex');
+        }
+        if($role == 5){
+            return redirect('/patientHome');
+        }
+        if($role == 6){
+            return redirect('/familyMemberHome');
+        }
+        // return login page if nothing else
+        return redirect('/login');
+
     }
 
     public function getLogin(){
@@ -112,10 +217,31 @@ class MainController extends Controller
         return redirect('/doctorAppt');
     }
 
-    public function getPatientHome(){
+    public function getPatientHome(Request $request){
+        $pid = $_SESSION['user1'][0]['ID'];
+        $mid = $_SESSION['user1'][0]['ID'];
+
+        
+        if($request->input('date') != date("Y-m-d")){
+            $date = $request->input('date');
+        } else {
+            $date = date("Y-m-d");
+        }
+
+        //query to search through caregiver info to see if they checked off info. Doctor name is doctor working that day. Caregiver is who worked that day for that group
+        $medicationTaken = DB::table('medicationtaken')->select('*')->wherePatientidAndDate($pid, $date)->get();
+        $medicationTaken = json_decode(json_encode($medicationTaken), true);
+        
+        $meals = DB::table('meals')->select('*')->wherePatientidAndDate($mid, $date)->get();
+        $meals = json_decode(json_encode($meals), true);
 
 
-        return view('patientHome');
+        // $caregiver = 
+        // $accounts = 
+        // $appointments = DB::table('appointments') ;
+        // $doctor = join accounts, roster on date
+        return $_POST['fahim'];
+        return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals);
     }
 
     public function getEmployee(){
@@ -127,10 +253,103 @@ class MainController extends Controller
             ->where('accounts.roleID','<', 5)
             ->get();
 
-        return view('employee',['Emps'=>$emps]);
+        // get the roles for the drop down
+        $roleIDs = DB::table('roles')
+            ->select('role','roleID')->get();
+
+        // get the ids for the drop down
+        $empsIDs = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the names for drop down
+        $empsNames = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('FName', 'LName')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the salaries for drop down
+        $empsSalaries = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get all the employees 
+        $empsNoSalary = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->select('roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries, 'EmpsNoSalary'=>$empsNoSalary]);
     }
 
-    public function postEmployee(Request $request){
+    public function updateEmpSalary(Request $request){
+        // check if emp has a salary or not
+        $isSalary = DB::select("select count(*) as count from accounts join employee  on accounts.ID = employee.employeeID where accounts.ID = ".($request->input('SalaryID')).";")[0];
+        $isSalary = json_decode(json_encode($isSalary), true)["count"];
+
+        if($isSalary == 0){
+            DB::table('employee')->insert(['employeeID' => $request->input('SalaryID'), 'salary'=> $request->input('sid')]);
+        }
+        else{
+            // set new salary for employee
+         DB::table('employee')
+            ->where('employeeID',  $request->input('SalaryID'))
+            ->update(['salary' => $request->input('sid')]);
+        }
+
+        // get all the employees 
+        $empsNoSalary = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->select('roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the employees info with salaries
+        $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the roles for the drop down
+        $roleIDs = DB::table('roles')
+            ->select('role','roleID')->get();
+
+        // get the ids for the drop down
+        $empsIDs = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the names for drop down
+        $empsNames = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('FName', 'LName')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the salaries for drop down
+        $empsSalaries = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+
+         return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries, 'EmpsNoSalary'=>$empsNoSalary]);
+    }
+
+    public function searchEmployee(Request $request){
+
+
         //check to see what search boxs have inputs
         if($request->input('searchID') != NULL && $request->input('searchName') != NULL && $request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
             $emps = DB::table('accounts')
@@ -192,8 +411,125 @@ class MainController extends Controller
             ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
             ->get();
         }
+        elseif($request->input('searchName') != NULL && $request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->get();
+        }
+        elseif($request->input('searchName') != NULL && $request->input('searchSalaray') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->get();
+        }
+        elseif($request->input('searchRole') != NULL && $request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->get();
+        }
+        elseif($request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->get();
+        }
+        elseif($request->input('searchSalary') != NULL && $request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchSalary') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('employee.salary','=', $request->input('searchSalary'))
+            ->get();
+        }
+        elseif($request->input('searchRole') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','=', $request->input('searchRole'))
+            ->get();
+        }
+        elseif($request->input('searchName') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.LName','like', "'%'.$request->input('searchName').'%'")
+            ->get();
+        }
+        elseif($request->input('searchID') != NULL){
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.ID','=', $request->input('searchID'))
+            ->get();
+        }
+        else{
+            $emps = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary', 'roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+        }
         
-        return view('employee',['Emps'=>$emps]);
+        // get all the employees 
+        $empsNoSalary = DB::table('accounts')
+            ->join('roles', 'accounts.roleID', '=', 'roles.roleID')
+            ->select('roles.role', 'accounts.FName', 'accounts.LName', 'accounts.ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the roles for the drop down
+        $roleIDs = DB::table('roles')
+            ->select('role','roleID')->get();
+
+        // get the ids for the drop down
+        $empsIDs = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('ID')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the names for drop down
+        $empsNames = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('FName', 'LName')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+
+        // get the salaries for drop down
+        $empsSalaries = DB::table('accounts')
+            ->join('employee', 'accounts.ID', '=', 'employee.employeeID')
+            ->select('employee.salary')
+            ->where('accounts.roleID','<', 5)
+            ->get();
+        
+        return view('employee',['Emps'=>$emps, 'RoleIDs'=>$roleIDs, 'EmpIDs'=>$empsIDs, 'EmpsNames'=>$empsNames, 'EmpSalaries'=>$empsSalaries, 'EmpsNoSalary'=>$empsNoSalary]);
     }
 
     public function getPatients(){
@@ -249,13 +585,14 @@ class MainController extends Controller
 
     public function postNewRoster(Request $request){
         //check if roster exist for the date
-        $rosterDate = $caregiver = DB::table('roster')->where
+        $rosterDate = DB::table('roster')->where
         ('date', $request->input('frmDateReg'))->get();
 
-        $DateCount = DB::select("select count(*) as count from roster where date = ".$request->input('frmDateReg').";")[0];
-        $DateCount = json_decode(json_encode($DateCount), true)["count"];
-        
-        if($DateCount <= 1){
+        // check roster to see if we already have a roster for that date
+        $DateCount = DB::table('roster')->where('date', '=', $request->input('frmDateReg'))->get();
+        $DateCount = $DateCount->count();
+
+        if($DateCount >= 1){
             //get the new roster info
             $nSuperID = $request->input('Supervisor');
             $nDocID = $request->input('Doctor');
@@ -265,6 +602,7 @@ class MainController extends Controller
             $nGroup4 = $request->input('caregiver4');
 
             //get the older roster info
+
             $oSuperID = $rosterDate[0]->supervisorID;
             $oDocID = $rosterDate[0]->doctorID;
             $oGroup1 = $rosterDate[0]->group1;
@@ -339,6 +677,32 @@ class MainController extends Controller
     }
 
     public function getCaregiverHome(){
+
+        // get all the patients for the group that the caregiver is working for that day
+        $pid = $_SESSION['user1'][0]['ID'];
+
+        // get the roster for current date and PID in group 1,2,3,4
+        $Roster = DB::table('roster')
+            ->where('date', '=' , date('Y-d-m'))
+            ->where('group1', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'accounts.ID', '=', 'meals.patientID')
+            ->join('medicationtaken', 'accounts.ID', '=', 'medicationtaken.patientID')
+            ->where('meals.date', '=' , date('Y-d-m'))
+            ->where('patient.group', '=', '1')
+            ->get();
+        }
+        
+
+        return view('caregiverHome');
+    }
+
+    public function postCaregiverHome(){
         return view('caregiverHome');
     }
 
@@ -386,103 +750,7 @@ class MainController extends Controller
         return view('familyMemberHome');
     }
 
-    public function getRegistration(){
-        return view('registration');
-    }
-
-    
-    // registration
-    public function registration(Request $request){
-        // validates their inputs
-        $fields = $request->validate([
-            'email' => 'required|string|unique:accounts,Email'
-        ]);
-
-        // sends their information to the DB
-        DB::table('accounts')->insert([
-            'roleID' => $request->input('role'),
-            'FName' => $request->input('fname'),
-            'LName' => $request->input('lname'),
-            'Email' => $request->input('email'),
-            'phNo' => $request->input('phone'),
-            'password' => $request->input('password'),
-            'DOB' => $request->input('DOB')
-        ]);
-
-        // then we regrab that previously entered information 
-        $user = DB::table('accounts')->where
-            ('Email', $request->input('email'))->first();
-
-        // then we check if Role from $user is a patient and then update the em contact stuff
-        // we may want to added validation to ensure those fields are filled in 
-        if($request->input('role') == 5){
-            DB::table('familycode')->insert([
-                'patientID'=>$user->ID,
-                'familyCode' => $request->input('familyCode')
-            ]);
-            
-            // get FCID info we just inserted to update the patients table
-            $FCID = DB::table('familycode')->where
-            ('patientID', $user->ID)->first();
-
-            DB::table('patient')->insert([
-                'patientID'=>$user->ID,
-                'FCID' => $FCID->FCID,
-                'admissionDate' => (date('Y')."-".date('m')."-".date('d')),
-                'emContact' => $request->input('familyName'),
-                'emContactPhNo' => $request->input('familyPhone'),
-                'relationEmContact' => $request->input('familyRelation')
-            ]);
-        }
-
-        // redirects to the login page
-        return redirect('/login');
-    }
-
-
-    // Login 
-    public function loginPost(Request $request){
-        // get user info from DB on email
-        $user = DB::table('accounts')->where
-            ('Email', $request->input('email'))->first();
-
-        // check if user has correct password
-        if(!$user || ($request->input('password') != $user->password)){
-            return view('login', ['loginError'=>'Your email or username is incorrect']);
-        };
-
-        // checks if their account is approved
-        if($user->isRegApproved == NULL){
-            return view('login', ['loginError'=>'Your account is not approved']);
-        };
-
-        // get user role
-        $role = $user->roleID;
-
-        // redirect to correct home page based on role
-        if($role == 1){
-            return redirect('/adminIndex');
-        }
-        if($role == 2){
-            return redirect('/superIndex');
-        }
-        if($role == 3){
-            return redirect('/docIndex');
-        }
-        if($role == 4){
-            return redirect('/careIndex');
-        }
-        if($role == 5){
-            return redirect('/patientHome');
-        }
-        if($role == 6){
-            return redirect('/familyMemberHome');
-        }
-
-        // return login page if nothing else
-        return redirect('/login');
-
-    }
+   
 
 
 
