@@ -86,3 +86,16 @@ td input {
     display: flex;
     justify-content: center
 }
+
+.checked {
+    background-color: #659bdd;
+}
+
+.unchecked {
+    background-color: rgb(204, 128, 128);
+}
+
+input[type="checkbox"]:disabled
+{
+     color:rgb(129, 55, 55);
+}

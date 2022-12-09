@@ -218,14 +218,16 @@ class MainController extends Controller
     }
 
     public function getPatientHome(Request $request){
+
+        // return $request->input('date');
         $pid = $_SESSION['user1'][0]['ID'];
         $mid = $_SESSION['user1'][0]['ID'];
 
-        
-        if($request->input('date') != date("Y-m-d")){
-            $date = $request->input('date');
-        } else {
+        $date = date("Y-m-d");
+        if($request->input('date') == null){
             $date = date("Y-m-d");
+        } else {
+            $date = $request->input('date');
         }
 
         //query to search through caregiver info to see if they checked off info. Doctor name is doctor working that day. Caregiver is who worked that day for that group
@@ -236,12 +238,44 @@ class MainController extends Controller
         $meals = json_decode(json_encode($meals), true);
 
 
-        // $caregiver = 
-        // $accounts = 
-        // $appointments = DB::table('appointments') ;
+        //get patient group, number select groupID from accounts where id = pid;
+        $group = DB::table('patient')->select('groupID')->where('patientID', '=', $pid)->get();
+        $group = json_decode(json_encode($group), true);
+
+        //$group is an array. This pulls the value out of that array and assigns it to groupID
+        foreach($group[0] as $v){
+            $groupID = $v;
+        }
+        
+        //initialize caregiver
+        $caregiver;
+        // get caregiver to insert into appt table
+        if ($groupID == 1){
+            // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+        } elseif($groupID == 2){
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+        } elseif($groupID == 3){
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+        } elseif ($groupID == 4) {
+            $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+        } 
+        $caregiver = json_decode(json_encode($caregiver), true);
+
+        $appointments = DB::table('appointments')->select('date')->where('patientID', '=', $pid)->get();
+        $appointments = json_decode(json_encode($appointments), true);
+
+        //$appointments is an array. This pulls the value out of that array and assigns it to groupID
+        foreach($appointments[0] as $v){
+            $apptDate = $v;
+        }
+
+        $doctor = DB::table('appointments')->join('accounts', 'appointments.doctorID', '=', 'accounts.ID')->select('appointments.doctorID', 'accounts.FName', 'accounts.LName')->wherePatientidAndDate($pid, $date)->get();
+        $doctor = json_decode(json_encode($doctor), true);
+
         // $doctor = join accounts, roster on date
-        return $_POST['fahim'];
-        return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals);
+
+        return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('apptDate', $apptDate)->with('doctor', $doctor);
     }
 
     public function getEmployee(){
@@ -679,6 +713,7 @@ class MainController extends Controller
     public function getCaregiverHome(){
 
         // get all the patients for the group that the caregiver is working for that day
+
         $pid = $_SESSION['user1'][0]['ID'];
 
         // get the roster for current date and PID in group 1,2,3,4
@@ -698,7 +733,6 @@ class MainController extends Controller
             ->get();
         }
         
-
         return view('caregiverHome');
     }
 
