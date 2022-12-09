@@ -81,13 +81,21 @@ button:hover {
   width: auto;
   padding: 10px 18px;
   background-color: #f44336;
+  cursor: pointer;
+}
+
+.cancelbtn:hover {
+  opacity: 0.5;
 }
 
 h1{
     text-align: center;
     font-size: 50px;
 }
-
+.error {
+  display: flex;
+  justify-content: center;
+}
 
 </style>
 <head>
@@ -100,7 +108,7 @@ h1{
         <div class="main">
             <div>
             <h1>Login Page</h1>
-            <p> {{ $loginError }} </p>
+            <p class="error"> {{ $loginError }} </p>
             <br>
             <form action="/login" method="POST">
               <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
