@@ -244,7 +244,7 @@ class MainController extends Controller
         foreach($group[0] as $v){
             $groupID = $v;
         }
-        
+        //test
         //initialize caregiver
         $caregiver;
         // get caregiver to insert into appt table
