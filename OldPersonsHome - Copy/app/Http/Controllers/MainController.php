@@ -275,7 +275,7 @@ class MainController extends Controller
 
         return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('apptDate', $apptDate)->with('doctor', $doctor);
     }
-
+//========================================================================================================
     public function getFamilyMemberHome(Request $request){
         $fcid = $request->input('fcid');
         $pid = $request->input('pid');
@@ -381,7 +381,7 @@ class MainController extends Controller
             return view('familyMemberHome')->with('FCError', 'Welcome to '.$x[0]['FName'].'\'s home page')->with('x', $x)->with('caregiver', $caregiver)->with('doctor', $doctor)->with('apptDate', $apptDate)->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date);
         };
     }
-
+//========================================================================================================
     public function getEmployee(){
         // get the employees info
         $emps = DB::table('accounts')
@@ -817,26 +817,7 @@ class MainController extends Controller
     public function getCaregiverHome(){
 
         // get all the patients for the group that the caregiver is working for that day
-
-        $pid = $_SESSION['user1'][0]['ID'];
-
-        // get the roster for current date and PID in group 1,2,3,4
-        $Roster = DB::table('roster')
-            ->where('date', '=' , date('Y-d-m'))
-            ->where('group1', '=', $pid)->get();
-
-        $RosterCount = $Roster->count();
-
-        if($RosterCount >= 1){
-            $Group1 = DB::table('accounts')
-            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->join('meals', 'accounts.ID', '=', 'meals.patientID')
-            ->join('medicationtaken', 'accounts.ID', '=', 'medicationtaken.patientID')
-            ->where('meals.date', '=' , date('Y-d-m'))
-            ->where('patient.group', '=', '1')
-            ->get();
-        }
-        
+    //     $pid = $_SESSION['user1']
         return view('caregiverHome');
     }
 

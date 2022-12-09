@@ -1,0 +1,87 @@
+*{
+    margin: none;
+    padding: none;
+    box-sizing: border-box;
+}
+.header{
+    width: 100%;
+    height: 150px;
+    border: 2px solid black;
+}
+.footer{
+    width: 100%;
+    height: 150px;
+    border: 2px solid red;
+}
+.main{
+    height: 650px;
+    width: 100%;
+}
+.mainInside{
+    font-size: 25px;
+    font-weight: bold;
+    flex-direction: row;
+    display: flex;
+    margin-top: 50px;
+}
+.title{
+    text-align: center;
+    margin-top: 3.2%;
+    font-size: 45px;
+}
+.nameRow{
+    width: 250px;
+    border: 2px solid black;
+    background-color: rgb(68, 68, 182);
+    color: white;
+    font-size: 25px;
+}
+.roleRow{
+    width: 250px;
+    border: 2px solid black;
+    background-color: rgb(68, 68, 182);
+    color: white;
+    font-size: 25px;
+    grid-column: span 2;
+}
+.patientInfo{
+    font-size: 20px;
+    justify-content: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    width: 60%;
+    margin: 15px auto;
+    display: grid;
+}
+
+.nameName, .roleRole{
+    width: 250px;
+    background-color: rgb(199, 199, 199);
+    text-align: center;
+}
+
+.checkBox{
+    font-size: 20px;
+    margin: auto 0;
+    margin-right: 70px;
+}
+.yesCheck{
+    width: 100px;
+}
+.submitB{
+    margin-top: 20%;
+    margin-left: 50%;
+}
+.okSubmit{
+    font-size: 20px;
+    background-color: rgb(39, 106, 39);
+    color: white;
+    cursor: pointer;
+}
+.okSubmit:hover {
+    background-color: rgb(62, 170, 62);
+}
+.okSubmit:active {
+    background-color: rgb(205, 242, 205);
+}
+
