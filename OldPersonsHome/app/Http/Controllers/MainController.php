@@ -123,7 +123,6 @@ class MainController extends Controller
 
     public function getLogin(){
         return view('login', ['loginError'=>'Please log in']);
-
     }
 
     public function getRegisApproval(){
@@ -230,7 +229,6 @@ class MainController extends Controller
             $date = $request->input('date');
         }
 
-        //query to search through caregiver info to see if they checked off info. Doctor name is doctor working that day. Caregiver is who worked that day for that group
         $medicationTaken = DB::table('medicationtaken')->select('*')->wherePatientidAndDate($pid, $date)->get();
         $medicationTaken = json_decode(json_encode($medicationTaken), true);
         
@@ -246,7 +244,7 @@ class MainController extends Controller
         foreach($group[0] as $v){
             $groupID = $v;
         }
-        
+        //test
         //initialize caregiver
         $caregiver;
         // get caregiver to insert into appt table
@@ -276,6 +274,112 @@ class MainController extends Controller
         // $doctor = join accounts, roster on date
 
         return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('apptDate', $apptDate)->with('doctor', $doctor);
+    }
+
+    public function getFamilyMemberHome(Request $request){
+        $fcid = $request->input('fcid');
+        $pid = $request->input('pid');
+
+        $date = date("Y-m-d");
+        if($request->input('date') == null){
+            $date = date("Y-m-d");
+        } else {
+            $date = $request->input('date');
+        }
+
+        $medicationTaken = DB::table('medicationtaken')->select('*')->wherePatientidAndDate($pid, $date)->get();
+        $medicationTaken = json_decode(json_encode($medicationTaken), true);
+        
+        $meals = DB::table('meals')->select('*')->wherePatientidAndDate($pid, $date)->get();
+        $meals = json_decode(json_encode($meals), true);
+        $x = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')->select('patient.patientID', 'patient.doctorID', 'patient.FCID', 'patient.groupID', 'accounts.FName', 'accounts.LName')->wherePatientidAndFcid($pid, $fcid)->get();
+        $x = json_decode(json_encode($x), true);
+
+        $doctor = DB::table('appointments')->join('accounts', 'appointments.doctorID', '=', 'accounts.ID')->select('appointments.doctorID', 'accounts.FName', 'accounts.LName')->wherePatientidAndDate($pid, $date)->get();
+        $doctor = json_decode(json_encode($doctor), true);
+
+        if($x == null){
+            return view('familyMemberHome', ['FCError'=>'Family Code and Patient ID do not match.']);
+        } else{
+             
+            $caregiver;
+            // get caregiver to insert into appt table
+            if ($x[0]['groupID'] == 1){
+                // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif($x[0]['groupID'] == 2){
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif($x[0]['groupID'] == 3){
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif ($x[0]['groupID'] == 4) {
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } 
+            $caregiver = json_decode(json_encode($caregiver), true);
+
+            $appointments = DB::table('appointments')->select('date')->where('patientID', '=', $pid)->get();
+            $appointments = json_decode(json_encode($appointments), true);
+    
+            //$appointments is an array. This pulls the value out of that array and assigns it to groupID
+            foreach($appointments[0] as $v){
+                $apptDate = $v;
+            }
+            
+            $doctor = isset($doctor);
+
+            return view('familyMemberHome')->with('FCError', 'Welcome to '.$x[0]['FName'].'\'s home page')->with('x', $x)->with('caregiver', $caregiver)->with('doctor', $doctor)->with('apptDate', $apptDate)->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('fcid', $fcid);
+        }
+    }
+
+    public function postFamilyMemberHome(Request $request){
+        $fcid = $request->input('fcid');
+        $pid = $request->input('pid');
+
+        $date = date("Y-m-d");
+        if($request->input('date') == null){
+            $date = date("Y-m-d");
+        } else {
+            $date = $request->input('date');
+        }
+
+        $medicationTaken = DB::table('medicationtaken')->select('*')->wherePatientidAndDate($pid, $date)->get();
+        $medicationTaken = json_decode(json_encode($medicationTaken), true);
+        
+        $meals = DB::table('meals')->select('*')->wherePatientidAndDate($pid, $date)->get();
+        $meals = json_decode(json_encode($meals), true);
+        $x = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')->select('patient.patientID', 'patient.doctorID', 'patient.FCID', 'patient.groupID', 'accounts.FName', 'accounts.LName')->wherePatientidAndFcid($pid, $fcid)->get();
+        $x = json_decode(json_encode($x), true);
+
+        $doctor = DB::table('appointments')->join('accounts', 'appointments.doctorID', '=', 'accounts.ID')->select('appointments.doctorID', 'accounts.FName', 'accounts.LName')->wherePatientidAndDate($pid, $date)->get();
+        $doctor = json_decode(json_encode($doctor), true);
+
+        if($x == null){
+            return view('familyMemberHome', ['FCError'=>'Family Code and Patient ID do not match.']);
+        } else{
+             
+            $caregiver;
+            // get caregiver to insert into appt table
+            if ($x[0]['groupID'] == 1){
+                // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif($x[0]['groupID'] == 2){
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif($x[0]['groupID'] == 3){
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif ($x[0]['groupID'] == 4) {
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } 
+            $caregiver = json_decode(json_encode($caregiver), true);
+
+            $appointments = DB::table('appointments')->select('date')->where('patientID', '=', $pid)->get();
+            $appointments = json_decode(json_encode($appointments), true);
+    
+            //$appointments is an array. This pulls the value out of that array and assigns it to groupID
+            foreach($appointments[0] as $v){
+                $apptDate = $v;
+            }
+       
+            return view('familyMemberHome')->with('FCError', 'Welcome to '.$x[0]['FName'].'\'s home page')->with('x', $x)->with('caregiver', $caregiver)->with('doctor', $doctor)->with('apptDate', $apptDate)->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date);
+        };
     }
 
     public function getEmployee(){
@@ -738,10 +842,6 @@ class MainController extends Controller
 
     public function postCaregiverHome(){
         return view('caregiverHome');
-    }
-
-    public function getFamilyMemberHome(){
-        return view('familyMemberHome');
     }
 
     public function getAdminReport(){

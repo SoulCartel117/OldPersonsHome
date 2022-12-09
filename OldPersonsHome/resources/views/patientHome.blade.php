@@ -47,23 +47,22 @@
             </tr>
             <tr>
                 <?php 
-                
                     if($doctor == null){
                         echo "<td></td>";
                     } else {
                         echo "<td>".$doctor[0]['FName']." ".$doctor[0]['LName']."</td>";
                     }
-                 ?>
+                ?>
             
-                    <?php 
-                    if($apptDate == $date){
-                        echo "<td class='checked'>
-                        <input id='checkbox-1' type='checkbox' checked disabled />
-                        </td>";
-                    }else {
-                        echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
-                    }
-                    ?>
+                <?php 
+                if($apptDate == $date){
+                    echo "<td class='checked'>
+                    <input id='checkbox-1' type='checkbox' checked disabled />
+                    </td>";
+                }else {
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }
+                ?>
                 
                 <td><?php echo $caregiver[0]['FName']." ".$caregiver[0]['LName'] ?></td>
 
