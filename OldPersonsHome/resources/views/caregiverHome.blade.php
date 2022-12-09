@@ -27,15 +27,23 @@
                 <th>Lunch</th>
                 <th>Dinner</th>
             </tr>
-            <tr>
-                <td>some php/js to input name</td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-            </tr>
+            
+            @foreach ($Group1 as $group1)
+            <form action="/caregiverHome" method="post">
+                <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                <tr>
+                    <td><input name="PID" value="{{$group1->patientID}}" style="visibility: hidden;">{{$group1->FName}} {{$group1->LName}}</td>
+                    <td><input name="checkbox-1" type="checkbox"  /></td>
+                    <td><input name="checkbox-2" type="checkbox"  /></td>
+                    <td><input name="checkbox-3" type="checkbox"  /></td>
+                    <td><input name="checkbox-4" type="checkbox"  /></td>
+                    <td><input name="checkbox-5" type="checkbox"  /></td>
+                    <td><input name="checkbox-6" type="checkbox"  /></td>
+                    <td><input type="submit" value="submit"></td>
+                </tr>
+            </form>
+            @endforeach
+            
         </table>
     </section>
 
