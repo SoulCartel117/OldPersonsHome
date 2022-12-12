@@ -3,16 +3,26 @@ h1 {
     justify-content: center;
     display: flex;
 }
-
-.doctorPatient {
+.patientDiv{
     display: flex;
-    justify-content: space-evenly;
-    width: 100%;
-    height: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+.patientDiv input[type=submit]{
+    margin-right: 8px;
+    padding: 4px;
+    background-color: green;
+    border: none;
+    color: white;
+}
+
+.doctorPatientInfo th {
+    background-color: rgb(199, 199, 199);
 }
 
 .doctorPatientInfo th, td {
-    background-color: rgb(199, 199, 199);
+    text-align: center;
 }
 
 .patient {
@@ -25,7 +35,7 @@ h1 {
     height: 100%;
 }
 
-.patientInfo th, td {
+.patientInfo th {
     background-color: rgb(199, 199, 199);
 }
 
@@ -56,4 +66,8 @@ h1 {
     background-color: green;
     border: none;
     color: white;
+}
+
+.tdDate{
+    display: none;
 }

@@ -14,7 +14,7 @@
         <form class="example" action="/employeeSearch" method="post">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <select class="searchBar" name="searchID" id="searchID">
-                <option value="" disabled selected>Select a ID</option>
+                <option value="" disabled selected>Select an ID</option>
                 @foreach ($EmpIDs as $empID)
                     <option value="{{ $empID->ID }}"> {{ $empID->ID}}</option>
                 @endforeach
