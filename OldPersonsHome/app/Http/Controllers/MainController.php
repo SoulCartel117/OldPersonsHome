@@ -217,7 +217,6 @@ class MainController extends Controller
     }
 
     public function getPatientHome(Request $request){
-
         // return $request->input('date');
         $pid = $_SESSION['user1'][0]['ID'];
         $mid = $_SESSION['user1'][0]['ID'];
@@ -229,51 +228,53 @@ class MainController extends Controller
             $date = $request->input('date');
         }
 
-        $medicationTaken = DB::table('medicationtaken')->select('*')->wherePatientidAndDate($pid, $date)->get();
-        $medicationTaken = json_decode(json_encode($medicationTaken), true);
-        
-        $meals = DB::table('meals')->select('*')->wherePatientidAndDate($mid, $date)->get();
-        $meals = json_decode(json_encode($meals), true);
-
-
         //get patient group, number select groupID from accounts where id = pid;
         $group = DB::table('patient')->select('groupID')->where('patientID', '=', $pid)->get();
         $group = json_decode(json_encode($group), true);
 
         //$group is an array. This pulls the value out of that array and assigns it to groupID
-        foreach($group[0] as $v){
-            $groupID = $v;
+        if(!empty($group)){
+            foreach($group[0] as $v){
+                $groupID = $v;
+            }
+
+            $meals = DB::table('meals')->select('*')->wherePatientidAndDate($mid, $date)->get();
+            $meals = json_decode(json_encode($meals), true);
+
+            $medicationTaken = DB::table('medicationtaken')->select('*')->wherePatientidAndDate($pid, $date)->get();
+            $medicationTaken = json_decode(json_encode($medicationTaken), true);
+            
+            //initialize caregiver
+            $caregiver;
+            // get caregiver to insert into appt table
+            if ($groupID == 1){
+                // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif($groupID == 2){
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif($groupID == 3){
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } elseif ($groupID == 4) {
+                $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
+            } 
+            $caregiver = json_decode(json_encode($caregiver), true);
+
+            $appointments = DB::table('appointments')->select('date')->where('patientID', '=', $pid)->get();
+            $appointments = json_decode(json_encode($appointments), true);
+
+            //$appointments is an array. This pulls the value out of that array and assigns it to groupID
+            foreach($appointments[0] as $v){
+                $apptDate = $v;
+            }
+            $doctor = DB::table('appointments')->join('accounts', 'appointments.doctorID', '=', 'accounts.ID')->select('appointments.doctorID', 'accounts.FName', 'accounts.LName')->wherePatientidAndDate($pid, $date)->get();
+            $doctor = json_decode(json_encode($doctor), true);
+
+            // $doctor = join accounts, roster on date
+
+            return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('apptDate', $apptDate)->with('doctor', $doctor);
+        } else{
+            return view('patientHome')->with('date', $date);
         }
-        //test
-        //initialize caregiver
-        $caregiver;
-        // get caregiver to insert into appt table
-        if ($groupID == 1){
-            // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group1',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
-        } elseif($groupID == 2){
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group2',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
-        } elseif($groupID == 3){
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group3',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
-        } elseif ($groupID == 4) {
-            $caregiver = DB::table('accounts')->join('roster', 'roster.group4',  '=', 'accounts.ID')->select('accounts.FName', 'accounts.LName')->where('roster.date', '=', $date)->get();
-        } 
-        $caregiver = json_decode(json_encode($caregiver), true);
-
-        $appointments = DB::table('appointments')->select('date')->where('patientID', '=', $pid)->get();
-        $appointments = json_decode(json_encode($appointments), true);
-
-        //$appointments is an array. This pulls the value out of that array and assigns it to groupID
-        foreach($appointments[0] as $v){
-            $apptDate = $v;
-        }
-
-        $doctor = DB::table('appointments')->join('accounts', 'appointments.doctorID', '=', 'accounts.ID')->select('appointments.doctorID', 'accounts.FName', 'accounts.LName')->wherePatientidAndDate($pid, $date)->get();
-        $doctor = json_decode(json_encode($doctor), true);
-
-        // $doctor = join accounts, roster on date
-
-        return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('apptDate', $apptDate)->with('doctor', $doctor);
     }
 
     public function getFamilyMemberHome(Request $request){
@@ -377,8 +378,8 @@ class MainController extends Controller
             foreach($appointments[0] as $v){
                 $apptDate = $v;
             }
-       
-            return view('familyMemberHome')->with('FCError', 'Welcome to '.$x[0]['FName'].'\'s home page')->with('x', $x)->with('caregiver', $caregiver)->with('doctor', $doctor)->with('apptDate', $apptDate)->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date);
+     
+            return view('familyMemberHome')->with('FCError', 'Welcome to '.$x[0]['FName'].'\'s home page')->with('x', $x)->with('caregiver', $caregiver)->with('doctor', $doctor)->with('apptDate', $apptDate)->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('fcid', $fcid)->with('pid', $pid);
         };
     }
 
@@ -486,7 +487,6 @@ class MainController extends Controller
     }
 
     public function searchEmployee(Request $request){
-
 
         //check to see what search boxs have inputs
         if($request->input('searchID') != NULL && $request->input('searchName') != NULL && $request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
@@ -671,8 +671,70 @@ class MainController extends Controller
     }
 
     public function getPatients(){
-        return view('patients');
+        //SELECT p.patientID, p.admissionDate, p.emContact, p.relationEmContact, p.emContactPhNo, a.FName, a.LName FROM patient p join accounts a on p.patientID = a.ID;
+        $allPatients = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')->get();
+        $allPatients = json_decode(json_encode($allPatients), true);
+
+        return view('patients')->with('allPatients', $allPatients);
     }
+
+public function postPatients(Request $request){
+    //SELECT p.patientID, p.admissionDate, p.emContact, p.relationEmContact, p.emContactPhNo, a.FName, a.LName FROM patient p join accounts a on p.patientID = a.ID;
+    $allPatients = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')->get();
+    $allPatients = json_decode(json_encode($allPatients), true);
+
+    $id = $request->input('searchID');
+    $fName = $request->input('searchFName');
+    $lName = $request->input('searchLName');
+    $DOB= $request->input('searchDOB');
+    $REC = $request->input('searchREC');
+    $EC = $request->input('searchEC');
+    $AD = $request->input('searchAD');
+
+    if(isset($id)){
+        $searchID = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.ID', '=', $id)->get();
+        $searchID = json_decode(json_encode($searchID), true);
+        return view('patients')->with('allPatients', $searchID);
+    } elseif (isset($fName)){
+        $searchFName = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.FName', '=', $fName)->get();
+        $searchFName = json_decode(json_encode($searchFName), true);
+        return view('patients')->with('allPatients', $searchFName);
+    } elseif (isset($lName)){
+        $searchLName = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.LName', '=', $lName)->get();
+        $searchLName = json_decode(json_encode($searchLName), true);
+        return view('patients')->with('allPatients', $searchLName);
+    }elseif (isset($DOB)){
+        $searchDOB = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.DOB', '=', $DOB)->get();
+        $searchDOB = json_decode(json_encode($searchDOB), true);
+        return view('patients')->with('allPatients', $searchDOB);
+    }elseif (isset($REC)){
+        $searchREC = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('patient.relationEmContact', '=', $REC)->get();
+        $searchREC = json_decode(json_encode($searchREC), true);
+        return view('patients')->with('allPatients', $searchREC);
+    }elseif (isset($EC)){
+        $searchEC = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('patient.emContact', '=', $EC)->get();
+        $searchEC = json_decode(json_encode($searchEC), true);
+        return view('patients')->with('allPatients', $searchEC);
+    }elseif (isset($AD)){
+        $searchAD = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('patient.admissionDate', '=', $AD)->get();
+        $searchAD = json_decode(json_encode($searchAD), true);
+        return view('patients')->with('allPatients', $searchAD);
+    }
+}
 
     public function getRoster(Request $request){
         // date is button
@@ -806,16 +868,77 @@ class MainController extends Controller
         return view('newRoster',['Super'=>$super,'Doctors'=>$doctor,'Care'=>$caregiver]);
     }
 
-    public function getDoctorHome(){
-        return view('doctorHome');
+    public function getDoctorHome(Request $request){
+        $did = $_SESSION['user1'][0]['ID'];
+        $date = $request->input('date');
+        $search = $request->input('searchAttribute');
+        $searchText = $request->input('searchText');
+
+        if($search == 1){
+            $FName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.FName', '=', $searchText)->get();
+            $FName = json_decode(json_encode($FName), true);
+
+            if(isset($date)){
+                $upcomingAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->whereBetween('appointments.date', [date("Y-m-d"), $date])->get();
+                $upcomingAppts = json_decode(json_encode($upcomingAppts), true);
+                return view('doctorHome')->with('oldAppts', $FName)->with('upcomingAppts', $upcomingAppts);
+            } else {
+                return view('doctorHome')->with('oldAppts', $FName);
+            }
+
+        } elseif($search == 2){
+            $LName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.LName', '=', $searchText)->get();
+            $LName = json_decode(json_encode($LName), true);
+
+            if(isset($date)){
+                $upcomingAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->whereBetween('appointments.date', [date("Y-m-d"), $date])->get();
+                $upcomingAppts = json_decode(json_encode($upcomingAppts), true);
+                return view('doctorHome')->with('oldAppts', $LName)->with('upcomingAppts', $upcomingAppts);
+            } else {
+                return view('doctorHome')->with('oldAppts', $LName);
+            } 
+
+        }elseif($search == 3){
+            $comment = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('appointments.comment', 'like', '%'.$searchText.'%')->get();
+            $comment = json_decode(json_encode($comment), true);
+
+            if(isset($date)){
+                $upcomingAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->whereBetween('appointments.date', [date("Y-m-d"), $date])->get();
+                $upcomingAppts = json_decode(json_encode($upcomingAppts), true);
+                return view('doctorHome')->with('oldAppts', $comment)->with('upcomingAppts', $upcomingAppts);
+            } else {
+                return view('doctorHome')->with('oldAppts', $comment);
+            } 
+
+        } else {
+            //SELECT DISTINCT a.patientID, a.comment, a.date, aa.FName, aa.LName, m.morningMed, m.afternoonMed, m.nightMed FROM accounts aa join appointments a on a.patientID=aa.ID join medicationtaken m on a.date = m.date where a.doctorID = 43;
+            $oldAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->get();
+            $oldAppts = json_decode(json_encode($oldAppts), true);
+
+            if(isset($date)){
+                $upcomingAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->whereBetween('appointments.date', [date("Y-m-d"), $date])->get();
+                $upcomingAppts = json_decode(json_encode($upcomingAppts), true);
+                return view('doctorHome')->with('oldAppts', $oldAppts)->with('upcomingAppts', $upcomingAppts);
+            } else {
+                return view('doctorHome')->with('oldAppts', $oldAppts);
+            } 
+        }
     }
 
     public function getPatientOfDoctor(){
+        $did = $_SESSION['user1'][0]['ID'];
+        
+        
+        // $test = json_decode(json_encode($test), true);
+        
+        // SELECT DISTINCT a.date, a.comment, a.doctorID, p.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight FROM appointments a join patient p on a.doctorID = p.doctorID and a.patientID = p.patientID where a.doctorID = 43;
+        //$test = DB::table('appointments')->join('patient', 'appointments.doctorID', '=', 'patient.doctorID', 'appointments.patientID', '=', 'patient.patientID')->distinct()->select('appointments.date', 'appointments.comment', 'appointments.doctorID', 'patient.patientID', 'patient.medNameMorning', 'patient.medNameAfternoon', 'patient.medNameNight')->where('appointments.doctorID', '=', $did)->get();
+        //SELECT DISTINCT a.date, a.comment, a.doctorID, p.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight FROM appointments a join patient p on a.doctorID = p.doctorID where a.doctorID = 43 and a.patientID = 48 and p.patientID = 48;
+        
         return view('patientOfDoctor');
     }
 
     public function getCaregiverHome(){
-
         // get all the patients for the group that the caregiver is working for that day
 
         $pid = $_SESSION['user1'][0]['ID'];
@@ -830,8 +953,13 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
             ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
+
 
             return view('caregiverHome', ['Group1'=>$Group1]);
             
@@ -847,7 +975,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '2')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -866,7 +998,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '3')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -884,7 +1020,10 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '4')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -895,7 +1034,7 @@ class MainController extends Controller
     }
 
     public function postCaregiverHome(Request $request){
-        // get the values of the checkboxes and see if they are check or not
+        // get the values of the checkboxes and see if they are check or not for meals
         if($request->filled('checkbox-4')){
             $checkBox4 = 1;
         }
@@ -915,10 +1054,38 @@ class MainController extends Controller
             $checkBox6 = 0;
         }
 
+        // update meals 
         DB::table('meals')->updateOrInsert(
             ['date'=> date('Y-m-d'), 'patientID' => $request->input('PID')],
             ['breakfast'=> $checkBox4, 'lunch'=> $checkBox5, 'dinner'=> $checkBox6 ]
         );
+
+        // get the values of the checkboxes and see if they are check or not for meals
+        if($request->filled('checkbox-1')){
+            $checkBox1 = 1;
+        }
+        else{
+            $checkBox1 = 0;
+        }
+        if($request->filled('checkbox-2')){
+            $checkBox2 = 1;
+        }
+        else{
+            $checkBox2 = 0;
+        }
+        if($request->filled('checkbox-3')){
+            $checkBox3 = 1;
+        }
+        else{
+            $checkBox3 = 0;
+        }
+
+        // update medication taken
+        DB::table('medicationtaken')->updateOrInsert(
+            ['date'=> date('Y-m-d'), 'patientID' => $request->input('PID')],
+            ['morningMed'=> $checkBox1, 'afternoonMed'=> $checkBox2, 'nightMed'=> $checkBox3 ]
+        );
+
 
         // get all the patients for the group that the caregiver is working for that day
         $pid = $_SESSION['user1'][0]['ID'];
@@ -933,7 +1100,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
             ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -950,7 +1121,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '2')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -969,7 +1144,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '3')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -987,7 +1166,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '4')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -1044,28 +1227,32 @@ class MainController extends Controller
 
 
 
-//     // Redirect to correct Home Page based on Role
-//     public function goBack(Request $request) {
-//         $user = DB::table('accounts')->where
-//         ('RoleID'== 1);
+    // Redirect to correct Home Page based on Role
+    public function goBack() {
+        // get account role ID
+        $roleID = $_SESSION['user1'][0]['roleID'];
 
-//         // checks if their account is Admin
-//         if($user->roleID == 1){
-//             return view('adminIndex');
-//         };
-//         // checks if their account is Supervisor
-//         if($user->roleID == 2){
-//             return view('superIndex');
-//         };
-
-//          // redirect to correct home page based on role
-//          if($roleID == 1){
-//              return redirect('/adminIndex');
-//          }
-//          if($roleID == 2){
-//              return redirect('/superIndex');
-//          }
-// }
+        // checks if their account is Admin
+        if($roleID == 1){
+            return redirect('/adminIndex');
+        }
+        if($roleID == 2){
+            return redirect('/superIndex');
+        }
+        if($roleID == 3){
+            return redirect('/docIndex');
+        }
+        if($roleID == 4){
+            return redirect('/careIndex');
+        }
+        if($roleID == 5){
+            return redirect('/patientHome');
+        }
+        if($roleID == 6){
+            return redirect('/familyMemberHome');
+        }
+        return redirect('/login');
+}
 
 
 }

@@ -30,6 +30,7 @@ Route::post('/employeeSearch', [MainController::class, 'searchEmployee']);
 Route::post('/employee', [MainController::class, 'updateEmpSalary']);
 
 Route::get('/patients', [MainController::class, 'getPatients']);
+Route::post('/patients', [MainController::class, 'postPatients']);
 
 Route::get('/roster', [MainController::class, 'getRoster']);
 
@@ -71,7 +72,7 @@ Route::get('/docIndex', [MainController::class, 'docIndex']);
 
 Route::get('/careIndex', [MainController::class, 'careIndex']);
 
-
+Route::post('/goBack', [MainController::class, 'goback']);
 
 //Route::get('/familyMemberHome', [MainController::class, 'famIndex']);
 
