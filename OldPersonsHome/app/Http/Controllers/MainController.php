@@ -1197,6 +1197,7 @@ public function postPatients(Request $request){
             ->where('meals.date', '=', date('Y-m-d'))
             ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
+
         return view('adminReport', ['Group1'=>$Group1]);
     }
 
