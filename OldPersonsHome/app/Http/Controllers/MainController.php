@@ -830,8 +830,13 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
             ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
+
 
             return view('caregiverHome', ['Group1'=>$Group1]);
             
@@ -847,7 +852,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '2')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -866,7 +875,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '3')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -884,7 +897,10 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '4')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -895,7 +911,7 @@ class MainController extends Controller
     }
 
     public function postCaregiverHome(Request $request){
-        // get the values of the checkboxes and see if they are check or not
+        // get the values of the checkboxes and see if they are check or not for meals
         if($request->filled('checkbox-4')){
             $checkBox4 = 1;
         }
@@ -915,10 +931,38 @@ class MainController extends Controller
             $checkBox6 = 0;
         }
 
+        // update meals 
         DB::table('meals')->updateOrInsert(
             ['date'=> date('Y-m-d'), 'patientID' => $request->input('PID')],
             ['breakfast'=> $checkBox4, 'lunch'=> $checkBox5, 'dinner'=> $checkBox6 ]
         );
+
+        // get the values of the checkboxes and see if they are check or not for meals
+        if($request->filled('checkbox-1')){
+            $checkBox1 = 1;
+        }
+        else{
+            $checkBox1 = 0;
+        }
+        if($request->filled('checkbox-2')){
+            $checkBox2 = 1;
+        }
+        else{
+            $checkBox2 = 0;
+        }
+        if($request->filled('checkbox-3')){
+            $checkBox3 = 1;
+        }
+        else{
+            $checkBox3 = 0;
+        }
+
+        // update medication taken
+        DB::table('medicationtaken')->updateOrInsert(
+            ['date'=> date('Y-m-d'), 'patientID' => $request->input('PID')],
+            ['morningMed'=> $checkBox1, 'afternoonMed'=> $checkBox2, 'nightMed'=> $checkBox3 ]
+        );
+
 
         // get all the patients for the group that the caregiver is working for that day
         $pid = $_SESSION['user1'][0]['ID'];
@@ -933,7 +977,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
             ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -950,7 +998,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '2')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -969,7 +1021,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '3')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);
@@ -987,7 +1043,11 @@ class MainController extends Controller
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->where('patient.groupID', '=', '4')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
 
             return view('caregiverHome', ['Group1'=>$Group1]);

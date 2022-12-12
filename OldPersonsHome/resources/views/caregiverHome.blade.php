@@ -33,12 +33,49 @@
                 <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <tr>
                     <td><input name="PID" value="{{$group1->patientID}}" style="visibility: hidden;">{{$group1->FName}} {{$group1->LName}}</td>
-                    <td><input name="checkbox-1" type="checkbox"  /></td>
+                    {{-- <td><input name="checkbox-1" type="checkbox"  /></td>
                     <td><input name="checkbox-2" type="checkbox"  /></td>
-                    <td><input name="checkbox-3" type="checkbox"  /></td>
-                    <td><input name="checkbox-4" type="checkbox"  /></td>
-                    <td><input name="checkbox-5" type="checkbox"  /></td>
-                    <td><input name="checkbox-6" type="checkbox"  /></td>
+                    <td><input name="checkbox-3" type="checkbox"  /></td> --}}
+                    <?php 
+                    if ($group1->morningMed == 1) {
+                        echo '<td><input name="checkbox-1" type="checkbox" checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-1" type="checkbox"  /></td>';
+                    }
+                    if ($group1->afternoonMed == 1) {
+                        echo '<td><input name="checkbox-2" type="checkbox" checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-2" type="checkbox"  /></td>';
+                    }
+                    if ($group1->nightMed == 1) {
+                        echo '<td><input name="checkbox-3" type="checkbox" checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-3" type="checkbox"  /></td>';
+                    }
+                    if ($group1->breakfast == 1) {
+                        echo '<td><input name="checkbox-4" type="checkbox" checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-4" type="checkbox"  /></td>';
+                    }
+                    if ($group1->lunch == 1) {
+                        echo '<td><input name="checkbox-5" type="checkbox" checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-5" type="checkbox"  /></td>';
+                    }
+                    if ($group1->dinner == 1) {
+                        echo '<td><input name="checkbox-6" type="checkbox" checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-6" type="checkbox"  /></td>';
+                    }
+                    
+                    ?>                    
+
                     <td><input type="submit" value="submit"></td>
                 </tr>
             </form>
