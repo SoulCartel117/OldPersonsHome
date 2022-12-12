@@ -95,12 +95,10 @@
     </form>
 
     <div>
-        <script>
-            function goBack() {
-              window.history.back();
-            }
-            </script>
-        <button onclick="goBack()">Go Back</button>
+        <form action="goBack" method="post">
+            <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+            <input type="submit" value="Homepage">
+        </form>
     </div>
 
 </body>

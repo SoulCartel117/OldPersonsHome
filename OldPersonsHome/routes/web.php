@@ -72,7 +72,7 @@ Route::get('/docIndex', [MainController::class, 'docIndex']);
 
 Route::get('/careIndex', [MainController::class, 'careIndex']);
 
-
+Route::post('/goBack', [MainController::class, 'goback']);
 
 //Route::get('/familyMemberHome', [MainController::class, 'famIndex']);
 

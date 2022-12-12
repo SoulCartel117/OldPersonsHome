@@ -943,9 +943,9 @@ public function postPatients(Request $request){
 
         $pid = $_SESSION['user1'][0]['ID'];
 
-        // get the roster for current date and PID in group 1,2,3,4
+        // get the roster for current date and PID in group 1
         $Roster = DB::table('roster')
-            ->where('date', '=' , date('Y-d-m'))
+            ->where('date', '=' , date('Y-m-d'))
             ->where('group1', '=', $pid)->get();
 
         $RosterCount = $Roster->count();
@@ -953,17 +953,233 @@ public function postPatients(Request $request){
         if($RosterCount >= 1){
             $Group1 = DB::table('accounts')
             ->join('patient', 'accounts.ID', '=', 'patient.patientID')
-            ->join('meals', 'accounts.ID', '=', 'meals.patientID')
-            ->join('medicationtaken', 'accounts.ID', '=', 'medicationtaken.patientID')
-            ->where('meals.date', '=' , date('Y-d-m'))
-            ->where('patient.group', '=', '1')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
             ->get();
+
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+            
+        }
+        /// try for group 2
+
+        $Roster = DB::table('roster')
+        ->where('date', '=' , date('Y-m-d'))
+        ->where('group2', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+        
+        }
+
+        /// try for group 3
+
+        $Roster = DB::table('roster')
+        ->where('date', '=' , date('Y-m-d'))
+        ->where('group3', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+            
+        }
+
+        /// try for group 4
+
+        $Roster = DB::table('roster')
+        ->where('date', '=' , date('Y-m-d'))
+        ->where('group4', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+
         }
         
         return view('caregiverHome');
     }
 
-    public function postCaregiverHome(){
+    public function postCaregiverHome(Request $request){
+        // get the values of the checkboxes and see if they are check or not for meals
+        if($request->filled('checkbox-4')){
+            $checkBox4 = 1;
+        }
+        else{
+            $checkBox4 = 0;
+        }
+        if($request->filled('checkbox-5')){
+            $checkBox5 = 1;
+        }
+        else{
+            $checkBox5 = 0;
+        }
+        if($request->filled('checkbox-6')){
+            $checkBox6 = 1;
+        }
+        else{
+            $checkBox6 = 0;
+        }
+
+        // update meals 
+        DB::table('meals')->updateOrInsert(
+            ['date'=> date('Y-m-d'), 'patientID' => $request->input('PID')],
+            ['breakfast'=> $checkBox4, 'lunch'=> $checkBox5, 'dinner'=> $checkBox6 ]
+        );
+
+        // get the values of the checkboxes and see if they are check or not for meals
+        if($request->filled('checkbox-1')){
+            $checkBox1 = 1;
+        }
+        else{
+            $checkBox1 = 0;
+        }
+        if($request->filled('checkbox-2')){
+            $checkBox2 = 1;
+        }
+        else{
+            $checkBox2 = 0;
+        }
+        if($request->filled('checkbox-3')){
+            $checkBox3 = 1;
+        }
+        else{
+            $checkBox3 = 0;
+        }
+
+        // update medication taken
+        DB::table('medicationtaken')->updateOrInsert(
+            ['date'=> date('Y-m-d'), 'patientID' => $request->input('PID')],
+            ['morningMed'=> $checkBox1, 'afternoonMed'=> $checkBox2, 'nightMed'=> $checkBox3 ]
+        );
+
+
+        // get all the patients for the group that the caregiver is working for that day
+        $pid = $_SESSION['user1'][0]['ID'];
+
+        // get the roster for current date and PID in group 1
+        $Roster = DB::table('roster')
+            ->where('date', '=' , date('Y-m-d'))
+            ->where('group1', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+            
+        }
+        /// try for group 2
+
+        $Roster = DB::table('roster')
+        ->where('date', '=' , date('Y-m-d'))
+        ->where('group2', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+        
+        }
+
+        /// try for group 3
+
+        $Roster = DB::table('roster')
+        ->where('date', '=' , date('Y-m-d'))
+        ->where('group3', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+            
+        }
+
+        /// try for group 4
+
+        $Roster = DB::table('roster')
+        ->where('date', '=' , date('Y-m-d'))
+        ->where('group4', '=', $pid)->get();
+
+        $RosterCount = $Roster->count();
+
+        if($RosterCount >= 1){
+            $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('patient.groupID', '=', '1')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+            return view('caregiverHome', ['Group1'=>$Group1]);
+
+        }
+
+
+        
+
         return view('caregiverHome');
     }
 
@@ -1011,28 +1227,32 @@ public function postPatients(Request $request){
 
 
 
-//     // Redirect to correct Home Page based on Role
-//     public function goBack(Request $request) {
-//         $user = DB::table('accounts')->where
-//         ('RoleID'== 1);
+    // Redirect to correct Home Page based on Role
+    public function goBack() {
+        // get account role ID
+        $roleID = $_SESSION['user1'][0]['roleID'];
 
-//         // checks if their account is Admin
-//         if($user->roleID == 1){
-//             return view('adminIndex');
-//         };
-//         // checks if their account is Supervisor
-//         if($user->roleID == 2){
-//             return view('superIndex');
-//         };
-
-//          // redirect to correct home page based on role
-//          if($roleID == 1){
-//              return redirect('/adminIndex');
-//          }
-//          if($roleID == 2){
-//              return redirect('/superIndex');
-//          }
-// }
+        // checks if their account is Admin
+        if($roleID == 1){
+            return redirect('/adminIndex');
+        }
+        if($roleID == 2){
+            return redirect('/superIndex');
+        }
+        if($roleID == 3){
+            return redirect('/docIndex');
+        }
+        if($roleID == 4){
+            return redirect('/careIndex');
+        }
+        if($roleID == 5){
+            return redirect('/patientHome');
+        }
+        if($roleID == 6){
+            return redirect('/familyMemberHome');
+        }
+        return redirect('/login');
+}
 
 
 }
