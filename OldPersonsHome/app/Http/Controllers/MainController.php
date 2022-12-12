@@ -497,7 +497,6 @@ class MainController extends Controller
 
     public function searchEmployee(Request $request){
 
-
         //check to see what search boxs have inputs
         if($request->input('searchID') != NULL && $request->input('searchName') != NULL && $request->input('searchRole') != NULL && $request->input('searchSalary') != NULL){
             $emps = DB::table('accounts')
@@ -681,8 +680,70 @@ class MainController extends Controller
     }
 
     public function getPatients(){
-        return view('patients');
+        //SELECT p.patientID, p.admissionDate, p.emContact, p.relationEmContact, p.emContactPhNo, a.FName, a.LName FROM patient p join accounts a on p.patientID = a.ID;
+        $allPatients = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')->get();
+        $allPatients = json_decode(json_encode($allPatients), true);
+
+        return view('patients')->with('allPatients', $allPatients);
     }
+
+public function postPatients(Request $request){
+    //SELECT p.patientID, p.admissionDate, p.emContact, p.relationEmContact, p.emContactPhNo, a.FName, a.LName FROM patient p join accounts a on p.patientID = a.ID;
+    $allPatients = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')->get();
+    $allPatients = json_decode(json_encode($allPatients), true);
+
+    $id = $request->input('searchID');
+    $fName = $request->input('searchFName');
+    $lName = $request->input('searchLName');
+    $DOB= $request->input('searchDOB');
+    $REC = $request->input('searchREC');
+    $EC = $request->input('searchEC');
+    $AD = $request->input('searchAD');
+
+    if(isset($id)){
+        $searchID = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.ID', '=', $id)->get();
+        $searchID = json_decode(json_encode($searchID), true);
+        return view('patients')->with('allPatients', $searchID);
+    } elseif (isset($fName)){
+        $searchFName = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.FName', '=', $fName)->get();
+        $searchFName = json_decode(json_encode($searchFName), true);
+        return view('patients')->with('allPatients', $searchFName);
+    } elseif (isset($lName)){
+        $searchLName = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.LName', '=', $lName)->get();
+        $searchLName = json_decode(json_encode($searchLName), true);
+        return view('patients')->with('allPatients', $searchLName);
+    }elseif (isset($DOB)){
+        $searchDOB = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('accounts.DOB', '=', $DOB)->get();
+        $searchDOB = json_decode(json_encode($searchDOB), true);
+        return view('patients')->with('allPatients', $searchDOB);
+    }elseif (isset($REC)){
+        $searchREC = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('patient.relationEmContact', '=', $REC)->get();
+        $searchREC = json_decode(json_encode($searchREC), true);
+        return view('patients')->with('allPatients', $searchREC);
+    }elseif (isset($EC)){
+        $searchEC = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('patient.emContact', '=', $EC)->get();
+        $searchEC = json_decode(json_encode($searchEC), true);
+        return view('patients')->with('allPatients', $searchEC);
+    }elseif (isset($AD)){
+        $searchAD = DB::table('patient')->join('accounts', 'patient.patientID', '=', 'accounts.ID')
+        ->select('patient.patientID', 'patient.admissionDate', 'patient.emContact', 'patient.relationEmContact', 'patient.emContactPhNo', 'accounts.FName', 'accounts.LName', 'accounts.DOB')
+        ->where('patient.admissionDate', '=', $AD)->get();
+        $searchAD = json_decode(json_encode($searchAD), true);
+        return view('patients')->with('allPatients', $searchAD);
+    }
+}
 
     public function getRoster(Request $request){
         // date is button
@@ -874,6 +935,15 @@ class MainController extends Controller
     }
 
     public function getPatientOfDoctor(){
+        $did = $_SESSION['user1'][0]['ID'];
+        
+        
+        // $test = json_decode(json_encode($test), true);
+        
+        // SELECT DISTINCT a.date, a.comment, a.doctorID, p.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight FROM appointments a join patient p on a.doctorID = p.doctorID and a.patientID = p.patientID where a.doctorID = 43;
+        //$test = DB::table('appointments')->join('patient', 'appointments.doctorID', '=', 'patient.doctorID', 'appointments.patientID', '=', 'patient.patientID')->distinct()->select('appointments.date', 'appointments.comment', 'appointments.doctorID', 'patient.patientID', 'patient.medNameMorning', 'patient.medNameAfternoon', 'patient.medNameNight')->where('appointments.doctorID', '=', $did)->get();
+        //SELECT DISTINCT a.date, a.comment, a.doctorID, p.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight FROM appointments a join patient p on a.doctorID = p.doctorID where a.doctorID = 43 and a.patientID = 48 and p.patientID = 48;
+        
         return view('patientOfDoctor');
     }
 
