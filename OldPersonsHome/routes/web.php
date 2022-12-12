@@ -30,6 +30,7 @@ Route::post('/employeeSearch', [MainController::class, 'searchEmployee']);
 Route::post('/employee', [MainController::class, 'updateEmpSalary']);
 
 Route::get('/patients', [MainController::class, 'getPatients']);
+Route::post('/patients', [MainController::class, 'postPatients']);
 
 Route::get('/roster', [MainController::class, 'getRoster']);
 
