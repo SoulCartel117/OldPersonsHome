@@ -46,17 +46,101 @@
                 <th>Dinner</th>
             </tr>
             <tr>
-                <td>some php/js to input name</td>
-                <td>some php/js to input name</td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td>some php/js to input name</td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
+                @foreach ($Group1 as $group1):
+                <td>{{$group1->FName}} {{$group1->LName}}</td>
+                
+                <?php 
+                    $doctors = DB::table('patient')
+                        ->join('accounts', 'accounts.ID', '=', 'patient.doctorID')
+                        ->get();
+                    $doctors = json_decode(json_encode($doctors), true);
+                    echo '<td>'.$doctors[0]['FName'].' '.$doctors[0]['LName'].'</td>';
+
+
+                    if ($group1->morningMed == 1) {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled  /></td>';
+                    }
+                
+                    if($group1->groupID == 1){
+                        $curRosterG1 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group1')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                            $curRosterG1 = json_decode(json_encode($curRosterG1), true);
+                          
+                        echo '<td>'.$curRosterG1[0]['FName'].' '.$curRosterG1[0]['LName'].'</td>';
+                    }
+                    if($group1->groupID == 2){
+                        $curRosterG2 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group2')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                        $curRosterG2 = json_decode(json_encode($curRosterG2), true);
+                          
+                        echo '<td>'.$curRosterG2[0]['FName'].' '.$curRosterG2[0]['LName'].'</td>';
+                    }
+                    if($group1->groupID == 3){
+                        $curRosterG3 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group3')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                        $curRosterG3 = json_decode(json_encode($curRosterG3), true);
+                          
+                        echo '<td>'.$curRosterG3[0]['FName'].' '.$curRosterG3[0]['LName'].'</td>';
+                    }
+                    if($group1->groupID == 4){
+                        $curRosterG4 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group4')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                        $curRosterG4 = json_decode(json_encode($curRosterG4), true);
+                          
+                        echo '<td>'.$curRosterG4[0]['FName'].' '.$curRosterG4[0]['LName'].'</td>';
+                    }
+
+                    if ($group1->morningMed == 1) {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->afternoonMed == 1) {
+                        echo '<td><input name="checkbox-2" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-2" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->nightMed == 1) {
+                        echo '<td><input name="checkbox-3" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-3" type="checkbox" disabled  /></td>';
+                    }
+                    if ($group1->breakfast == 1) {
+                        echo '<td><input name="checkbox-4" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-4" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->lunch == 1) {
+                        echo '<td><input name="checkbox-5" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-5" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->dinner == 1) {
+                        echo '<td><input name="checkbox-6" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-6" type="checkbox" disabled /></td>';
+                    }
+                    
+                    ?>       
             </tr>
+            @endforeach
         </table>
     </section>
     <div>

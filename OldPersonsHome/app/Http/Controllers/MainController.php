@@ -263,15 +263,24 @@ class MainController extends Controller
             $appointments = json_decode(json_encode($appointments), true);
 
             //$appointments is an array. This pulls the value out of that array and assigns it to groupID
-            foreach($appointments[0] as $v){
-                $apptDate = $v;
+            if(!empty($appointments)){
+                foreach($appointments[0] as $v){
+                    $apptDate = $v;
+                }
+
+                $doctor = DB::table('appointments')->join('accounts', 'appointments.doctorID', '=', 'accounts.ID')->select('appointments.doctorID', 'accounts.FName', 'accounts.LName')->wherePatientidAndDate($pid, $date)->get();
+                $doctor = json_decode(json_encode($doctor), true);
+
+                return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('apptDate', $apptDate)->with('doctor', $doctor);
+        
             }
+            
             $doctor = DB::table('appointments')->join('accounts', 'appointments.doctorID', '=', 'accounts.ID')->select('appointments.doctorID', 'accounts.FName', 'accounts.LName')->wherePatientidAndDate($pid, $date)->get();
             $doctor = json_decode(json_encode($doctor), true);
 
             // $doctor = join accounts, roster on date
 
-            return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('apptDate', $apptDate)->with('doctor', $doctor);
+            return view('patientHome')->with('medicationTaken', $medicationTaken)->with('meals', $meals)->with('date', $date)->with('caregiver', $caregiver)->with('doctor', $doctor);
         } else{
             return view('patientHome')->with('date', $date);
         }
@@ -1057,7 +1066,7 @@ public function postPatients(Request $request){
         // update meals 
         DB::table('meals')->updateOrInsert(
             ['date'=> date('Y-m-d'), 'patientID' => $request->input('PID')],
-            ['breakfast'=> $checkBox4, 'lunch'=> $checkBox5, 'dinner'=> $checkBox6 ]
+            ['breakfast'=> $checkBox4, 'lunch'=> $checkBox5, 'dinner'=> $checkBox6]
         );
 
         // get the values of the checkboxes and see if they are check or not for meals
@@ -1176,15 +1185,20 @@ public function postPatients(Request $request){
             return view('caregiverHome', ['Group1'=>$Group1]);
 
         }
-
-
-        
-
         return view('caregiverHome');
     }
 
     public function getAdminReport(){
-        return view('adminReport');
+        $Group1 = DB::table('accounts')
+            ->join('patient', 'accounts.ID', '=', 'patient.patientID')
+            ->join('meals', 'meals.patientID', '=', 'accounts.ID')
+            ->join('medicationtaken', 'medicationtaken.patientID', '=', 'accounts.ID')
+            ->where('accounts.roleID', '=', '5')
+            ->where('meals.date', '=', date('Y-m-d'))
+            ->where('medicationtaken.date', '=', date('Y-m-d'))
+            ->get();
+
+        return view('adminReport', ['Group1'=>$Group1]);
     }
 
     public function getPayment(){
