@@ -46,17 +46,59 @@
                 <th>Dinner</th>
             </tr>
             <tr>
-                <td>some php/js to input name</td>
-                <td>some php/js to input name</td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td>some php/js to input name</td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
-                <td><input id="checkbox-1" type="checkbox" checked disabled /></td>
+                @foreach ($Group1 as $group1)
+                <td>{{$group1->FName}} {{$group1->LName}}</td>
+                <td>{{$group1->doctorID}}</td>
+                <?php 
+                    if ($group1->morningMed == 1) {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled  /></td>';
+                    }
+                ?>
+                <td>caregivers name</td>
+                    <?php 
+                    if ($group1->morningMed == 1) {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-1" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->afternoonMed == 1) {
+                        echo '<td><input name="checkbox-2" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-2" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->nightMed == 1) {
+                        echo '<td><input name="checkbox-3" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-3" type="checkbox" disabled  /></td>';
+                    }
+                    if ($group1->breakfast == 1) {
+                        echo '<td><input name="checkbox-4" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-4" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->lunch == 1) {
+                        echo '<td><input name="checkbox-5" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-5" type="checkbox" disabled /></td>';
+                    }
+                    if ($group1->dinner == 1) {
+                        echo '<td><input name="checkbox-6" type="checkbox" disabled checked /></td>';
+                    }
+                    else {
+                        echo '<td><input name="checkbox-6" type="checkbox" disabled /></td>';
+                    }
+                    
+                    ?>       
             </tr>
+            @endforeach
         </table>
     </section>
     <div>

@@ -33,9 +33,6 @@
                 <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <tr>
                     <td><input name="PID" value="{{$group1->patientID}}" style="visibility: hidden;">{{$group1->FName}} {{$group1->LName}}</td>
-                    {{-- <td><input name="checkbox-1" type="checkbox"  /></td>
-                    <td><input name="checkbox-2" type="checkbox"  /></td>
-                    <td><input name="checkbox-3" type="checkbox"  /></td> --}}
                     <?php 
                     if ($group1->morningMed == 1) {
                         echo '<td><input name="checkbox-1" type="checkbox" checked /></td>';
