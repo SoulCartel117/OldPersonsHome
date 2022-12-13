@@ -46,73 +46,109 @@
                 <th>Dinner</th>
             </tr>
             <tr>
-                <?php 
-                    if($doctor == null){
-                        echo "<td></td>";
-                    } else {
-                        echo "<td>".$doctor[0]['FName']." ".$doctor[0]['LName']."</td>";
-                    }
-                ?>
+            <?php
+                if(!isset($doctor)){
+                    echo "<td></td>";
+                } elseif($doctor == null) {
+                    echo "<td></td>";
+                }else {
+                    echo "<td>".$doctor[0]['FName']." ".$doctor[0]['LName']."</td>";
+                }
+            ?>
             
-                <?php 
-                if($apptDate == $date){
+            <?php 
+                if(!isset($apptDate)){
+                    echo "<td class='unchecked'>
+                    <input id='checkbox-1' type='checkbox' unchecked disabled />
+                    </td>";
+                }elseif($apptDate == $date){
                     echo "<td class='checked'>
                     <input id='checkbox-1' type='checkbox' checked disabled />
                     </td>";
                 }else {
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                 }
-                ?>
+            ?>
                 
-                <td><?php echo $caregiver[0]['FName']." ".$caregiver[0]['LName'] ?></td>
+            <?php 
+                if(!isset($caregiver)){
+                    echo "<td></td>";
+                }else{
+                    echo "<td>".$caregiver[0]['FName']." ".$caregiver[0]['LName']."</td>"; 
+                }
+            ?>
 
-                <?php if($medicationTaken[0]['morningMed'] == 1){
+            <?php 
+                if(!isset($medicationTaken)){
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }elseif($medicationTaken[0]['morningMed'] == 1){
                     echo "<td class='checked'>
                     <input id='checkbox-1' type='checkbox' checked disabled />
                     </td>";
                 } else {
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
-                }?>
-            
-                <?php if($medicationTaken[0]['afternoonMed'] == 1){
-                    echo "<td class='checked'>
-                    <input id='checkbox-1' type='checkbox' checked disabled />
-                    </td>";
-                } else {
-                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
-                }?>
+                }
+            ?>
 
-                <?php if($medicationTaken[0]['nightMed'] == 1){
+            <?php 
+                if(!isset($medicationTaken)){
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }elseif($medicationTaken[0]['nightMed'] == 1){
                     echo "<td class='checked'>
                     <input id='checkbox-1' type='checkbox' checked disabled />
                     </td>";
                 } else {
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
-                }?>
+                }
+            ?>
 
-                <?php if($meals[0]['breakfast'] == 1){
+            <?php 
+                if(!isset($medicationTaken)){
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }elseif($medicationTaken[0]['nightMed'] == 1){
                     echo "<td class='checked'>
                     <input id='checkbox-1' type='checkbox' checked disabled />
                     </td>";
                 } else {
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
-                }?>
+                }
+            ?>
 
-                <?php if($meals[0]['lunch'] == 1){
+            <?php 
+                if(!isset($meals)){
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }elseif($meals[0]['breakfast'] == 1){
                     echo "<td class='checked'>
                     <input id='checkbox-1' type='checkbox' checked disabled />
                     </td>";
                 } else {
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
-                }?>
+                }
+            ?>
 
-                <?php if($meals[0]['dinner'] == 1){
+            <?php 
+                if(!isset($meals)){
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }elseif($meals[0]['lunch'] == 1){
                     echo "<td class='checked'>
                     <input id='checkbox-1' type='checkbox' checked disabled />
                     </td>";
                 } else {
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
-                }?>
+                }
+            ?>
+
+            <?php 
+                if(!isset($meals)){
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }elseif($meals[0]['dinner'] == 1){
+                    echo "<td class='checked'>
+                    <input id='checkbox-1' type='checkbox' checked disabled />
+                    </td>";
+                } else {
+                    echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                }
+            ?>
                 
             </tr>
         </table>

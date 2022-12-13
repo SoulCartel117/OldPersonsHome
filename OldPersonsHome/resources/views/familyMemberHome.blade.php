@@ -14,13 +14,13 @@
         <form action="/familyMemberHome" method="post">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <label for="date">Date</label>
-            <input type="date" name="date" id="frmDate" value="<?php echo date("Y-m-d"); ?>"><br><br>
+            <input type="date" name="date" id="frmDate" <?php if(isset($date)){echo "value=".$date."";} else { echo "value=".date("Y-m-d")."";} ?>><br><br>
             
             <label for="">Family code (For Patient Family Member)</label>
-            <input type="text" name="fcid" id="" value=""><br>
+            <input type="text" name="fcid" id="" <?php if(isset($fcid)){echo "value=".$fcid."";} ?>><br>
 
             <label for="">Patient ID (For Patient Family Member)</label>
-            <input type="text" name="pid" id="" value="">
+            <input type="text" name="pid" id="" <?php if(isset($pid)){echo "value=".$pid."";} ?>>
             <input type="submit" value="Ok">
         </form>
     </div><br><br>
@@ -78,7 +78,6 @@
                 ?>
 
                 <?php 
-
                     if(!isset($medicationTaken)){
                         echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                     }elseif($medicationTaken[0]['morningMed'] == 1){
