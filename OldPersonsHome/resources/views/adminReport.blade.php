@@ -46,19 +46,61 @@
                 <th>Dinner</th>
             </tr>
             <tr>
-                @foreach ($Group1 as $group1)
+                @foreach ($Group1 as $group1):
                 <td>{{$group1->FName}} {{$group1->LName}}</td>
-                <td>{{$group1->doctorID}}</td>
+                
                 <?php 
+                    $doctors = DB::table('patient')
+                        ->join('accounts', 'accounts.ID', '=', 'patient.doctorID')
+                        ->get();
+                    $doctors = json_decode(json_encode($doctors), true);
+                    echo '<td>'.$doctors[0]['FName'].' '.$doctors[0]['LName'].'</td>';
+
+
                     if ($group1->morningMed == 1) {
                         echo '<td><input name="checkbox-1" type="checkbox" disabled checked /></td>';
                     }
                     else {
                         echo '<td><input name="checkbox-1" type="checkbox" disabled  /></td>';
                     }
-                ?>
-                <td>caregivers name</td>
-                    <?php 
+                
+                    if($group1->groupID == 1){
+                        $curRosterG1 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group1')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                            $curRosterG1 = json_decode(json_encode($curRosterG1), true);
+                          
+                        echo '<td>'.$curRosterG1[0]['FName'].' '.$curRosterG1[0]['LName'].'</td>';
+                    }
+                    if($group1->groupID == 2){
+                        $curRosterG2 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group2')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                        $curRosterG2 = json_decode(json_encode($curRosterG2), true);
+                          
+                        echo '<td>'.$curRosterG2[0]['FName'].' '.$curRosterG2[0]['LName'].'</td>';
+                    }
+                    if($group1->groupID == 3){
+                        $curRosterG3 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group3')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                        $curRosterG3 = json_decode(json_encode($curRosterG3), true);
+                          
+                        echo '<td>'.$curRosterG3[0]['FName'].' '.$curRosterG3[0]['LName'].'</td>';
+                    }
+                    if($group1->groupID == 4){
+                        $curRosterG4 = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.group4')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                        $curRosterG4 = json_decode(json_encode($curRosterG4), true);
+                          
+                        echo '<td>'.$curRosterG4[0]['FName'].' '.$curRosterG4[0]['LName'].'</td>';
+                    }
+
                     if ($group1->morningMed == 1) {
                         echo '<td><input name="checkbox-1" type="checkbox" disabled checked /></td>';
                     }
