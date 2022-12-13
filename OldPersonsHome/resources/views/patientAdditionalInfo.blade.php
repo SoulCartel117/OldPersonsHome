@@ -9,13 +9,16 @@
 </head>
 <body>
     <p> <h1>Addition Information of Patient</h1> </p>
-
+    <?php
+        $test = DB::table('accounts')->select('*')->whereroleidAndIsregapproved(5, 1)->get(); 
+    ?>
     <div class="mainDiv">
         <div class="leftDiv">
             <form action="/patientAdditionalInfo" method="POST">
             @csrf
+                <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <label for="pid">Patient ID</label>
-                <input type="text" id="pid" name="pid"><br><br>
+                <input type="text" id="pid" name="pid" onchange="nameFinder()"><br><br>
 
                 <label for="did">Doctor</label>
                 <select name="did" id="did">
@@ -40,8 +43,9 @@
             
         <div class="rightDiv">
             <form action="/patientAdditionalInfo" method="POST">
+                <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <label for="pid">Patient Name</label>
-                <input type="text" id="pid" name="pid"><br><br>
+                <input type="text" id="name" name="" value=""><br><br>
             </form>
         </div>
     </div>
@@ -60,4 +64,19 @@
         <button onclick="goBack()">Go Back</button>
     </div>
 </body>
+<script>
+    function nameFinder(){
+        var test = JSON.parse('<?php echo json_encode($test) ?>');
+        patientID = document.getElementById("pid").value;
+        for(x=0; x<test.length; x++){
+            if(patientID == test[x].ID){
+            document.getElementById("name").value = test[x].FName + " " + test[x].LName;
+            break;
+            }
+            else{
+                document.getElementById("name").value = "";
+            }
+        }
+    }
+</script>
 </html>
