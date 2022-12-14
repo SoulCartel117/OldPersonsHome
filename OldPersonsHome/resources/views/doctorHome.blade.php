@@ -11,29 +11,18 @@
     <p> <h1>Doctor Home</h1> </p>
 
     <section class="search">
-        <form class="example" action="action_page.php">
-            <input type="text" placeholder="Search name.." name="search">
-            <button type="submit"><i class="fa fa-search">Search</i></button>
-        </form>
-        <form class="example" action="action_page.php">
-            <input type="text" placeholder="Search date.." name="search">
-            <button type="submit"><i class="fa fa-search">Search</i></button>
-        </form>
-        <form class="example" action="action_page.php">
-            <input type="text" placeholder="Search comment.." name="search">
-            <button type="submit"><i class="fa fa-search">Search</i></button>
-        </form>
-        <form class="example" action="action_page.php">
-            <input type="text" placeholder="Search morning med.." name="search">
-            <button type="submit"><i class="fa fa-search">Search</i></button>
-        </form>
-        <form class="example" action="action_page.php">
-            <input type="text" placeholder="Search afternoon med.." name="search">
-            <button type="submit"><i class="fa fa-search">Search</i></button>
-        </form>
-        <form class="example" action="action_page.php">
-            <input type="text" placeholder="Search night med.." name="search">
-            <button type="submit"><i class="fa fa-search">Search</i></button>
+        <form class="example" action="/doctorHome" method="get">
+            <label for="search" name="nameSearch"  class="searchAtt">Search by attribute</label>
+            <select name="searchAttribute" id="search" class="dropdown">
+                <option value="" disabled selected>Search by attribute...</option>
+                <option value="1">First Name</option>
+                <option value="2">Last Name</option>
+                <option value="3">Comment</option>
+            </select>
+
+            <input type="text" value="" name="searchText">
+
+            <input type="submit" class="button">
         </form>
     </section><br>
 
@@ -47,21 +36,55 @@
                 <th>Afternoon Med</th>
                 <th>Night Med</th>
             </tr>
-            <tr>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-                <td>name</td>
-            </tr>
+            @foreach ($oldAppts as $x)
+                <tr>
+                    <td class="dataRows"><?php echo $x['FName']." ".$x['LName'] ?></td>
+                    <td class="dataRows"><?php echo date("m-d-Y", strtotime($x['date'])) ?></td>
+                    <td class="dataRows"><?php echo $x['comment']?></td>
+
+                    <?php 
+                        if($x['morningMed'] == 1){
+                            echo "<td class='checked'>
+                            <input id='checkbox-1' type='checkbox' checked disabled />
+                            </td>";
+                        } else {
+                            echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                        }
+                    ?>
+                    
+                    <?php 
+                        if(!isset($medicationTaken)){
+                            echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                        }elseif($medicationTaken[0]['afternoonMed'] == 1){
+                            echo "<td class='checked'>
+                            <input id='checkbox-1' type='checkbox' checked disabled />
+                            </td>";
+                        } else {
+                            echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                        }
+                    ?>
+
+                    <?php 
+                        if(!isset($medicationTaken)){
+                            echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                        }elseif($medicationTaken[0]['nightMed'] == 1){
+                            echo "<td class='checked'>
+                            <input id='checkbox-1' type='checkbox' checked disabled />
+                            </td>";
+                        } else {
+                            echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
+                        }
+                    ?>
+                </tr>
+            @endforeach
+
         </table>
     </section><br>
 
     <section class="apptSection">
         <form action="">
-            <label for="date">Appointments</label>
-            <input type="text" name="frmDateReg" required id="frmDate" value="" class="input">
+            <label for="date" class="apptDate" >Appointments</label>
+            <input type="date" name="date" id="date" value="<?php echo date("Y-m-d");?>" class="input">
             <input type="submit" class="submit" value="Submit">
         </form>
     </section><br>
@@ -72,19 +95,31 @@
                 <th>Patient</th>
                 <th>Date</th>
             </tr>
-            <tr>
-                <td>name</td>
-                <td>name</td>
-            </tr>
+            <?php 
+                if(!isset($upcomingAppts)){
+                    echo 
+                    "<tr>
+                        <td>Enter date for upcoming appointment</td>
+                        <td></td>
+                    </tr>";
+                } else {
+                    foreach ($upcomingAppts as $y){
+                        echo
+                        "<tr>
+                            <td class='dataRows'>". $y['FName']." ".$y['LName']."</td>
+                            <td class='dataRows'>". date("m-d-Y", strtotime($y['date']))."</td>
+                        </tr>";
+                    }
+                }
+            ?>
+        
         </table>
     </section>
     <div>
-        <script>
-            function goBack() {
-              window.history.back();
-            }
-            </script>
-        <button onclick="goBack()">Go Back</button>
+        <form action="goBack" method="post">
+            <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+            <input type="submit" value="Homepage">
+        </form>
     </div>
     </body>
 </html>
