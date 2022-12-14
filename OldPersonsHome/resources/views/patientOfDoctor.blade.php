@@ -20,14 +20,7 @@ use Illuminate\Support\Facades\DB;
     $test = json_decode(json_encode($test), true);
 
 
-    $test1 = DB::table('appointments')
-    ->join('patient as p', 'p.doctorID', '=', 'appointments.doctorID')
-    ->join('patient as pp', 'pp.patientID', '=', 'appointments.patientID')
-    ->distinct()
-    ->select('appointments.patientID', 'appointments.date', 'appointments.comment', 'appointments.doctorID', 'pp.patientID', 'p.medNameMorning', 'p.medNameAfternoon', 'p.medNameNight')
-    ->where('appointments.doctorID', '=', $did)
-    ->where('appointments.date', '>=', date("Y-m-d"))
-    ->get();
+    $test1 = DB::select("select a.appointmentID, a.comment, a.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight, a.date FROM patient p join appointments a on a.doctorID = p.doctorID where a.doctorID = $did and date = $date1 group by a.appointmentID order by date asc;");
     $test1 = json_decode(json_encode($test1), true);
     
 ?>
@@ -75,11 +68,11 @@ use Illuminate\Support\Facades\DB;
                         <th>Night Med</th>
                     </tr>
                     <div class="inputDiv" >
-                        <tr>
-                            <td id="disabled"><input type="text" name="comment"></td>
-                            <td id="disabled"><input type="text" name="morningMed"></td>
-                            <td id="disabled"><input type="text" name="afternoonMed"></td>
-                            <td id="disabled"><input type="text" name="nightMed"></td>
+                        <tr id="disabled">
+                            <td><input type="text" name="comment"></td>
+                            <td><input type="text" name="morningMed"></td>
+                            <td><input type="text" name="afternoonMed"></td>
+                            <td><input type="text" name="nightMed"></td>
                         </tr>
                     </div>
                 </table><br><br>
@@ -113,13 +106,16 @@ use Illuminate\Support\Facades\DB;
 
         var test1 = JSON.parse('<?php echo json_encode($test1) ?>');
         const date = new Date().toJSON().slice(0, 10);
-        console.log(test1)
-            if(test1[0].date == date ){
-                document.getElementById("disabled").style.display = "block";
-            } else{
-                document.getElementById("disabled").style.display = "none";
-                console.log(document.getElementById("disabled"));
-            }
+        console.log(test1);
+        console.log(date);
+        if (typeof test1.date !== 'undefined'){
+            document.getElementById("disabled").style.display = "block";
+            console.log("block");
+        } else{
+            document.getElementById("disabled").style.display = "none";
+            console.log("none");
+        }
+    
     }
 
     </script>

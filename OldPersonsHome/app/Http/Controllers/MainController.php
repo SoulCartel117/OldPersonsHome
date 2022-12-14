@@ -884,7 +884,7 @@ public function postPatients(Request $request){
         $searchText = $request->input('searchText');
 
         if($search == 1){
-            $FName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.FName', '=', $searchText)->get();
+            $FName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.FName', '=', $searchText)->groupBy('comment')->get();
             $FName = json_decode(json_encode($FName), true);
 
             if(isset($date)){
@@ -896,7 +896,7 @@ public function postPatients(Request $request){
             }
 
         } elseif($search == 2){
-            $LName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.LName', '=', $searchText)->get();
+            $LName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.LName', '=', $searchText)->groupBy('comment')->get();
             $LName = json_decode(json_encode($LName), true);
 
             if(isset($date)){
@@ -908,7 +908,7 @@ public function postPatients(Request $request){
             } 
 
         }elseif($search == 3){
-            $comment = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('appointments.comment', 'like', '%'.$searchText.'%')->get();
+            $comment = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('appointments.comment', 'like', '%'.$searchText.'%')->groupBy('comment')->get();
             $comment = json_decode(json_encode($comment), true);
 
             if(isset($date)){
@@ -921,7 +921,7 @@ public function postPatients(Request $request){
 
         } else {
             //SELECT DISTINCT a.patientID, a.comment, a.date, aa.FName, aa.LName, m.morningMed, m.afternoonMed, m.nightMed FROM accounts aa join appointments a on a.patientID=aa.ID join medicationtaken m on a.date = m.date where a.doctorID = 43;
-            $oldAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->get();
+            $oldAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->groupBy('comment')->get();
             $oldAppts = json_decode(json_encode($oldAppts), true);
 
             if(isset($date)){
@@ -936,7 +936,7 @@ public function postPatients(Request $request){
 
     public function getPatientOfDoctor(Request $request){
         $did = $_SESSION['user1'][0]['ID'];
-        
+
  
         return view('patientOfDoctor');
     }
