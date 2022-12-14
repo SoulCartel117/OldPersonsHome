@@ -40,6 +40,8 @@ Route::post('/newRoster', [MainController::class, 'postNewRoster']);
 Route::get('/doctorHome', [MainController::class, 'getDoctorHome']);
 
 Route::get('/patientOfDoctor', [MainController::class, 'getPatientOfDoctor']);
+Route::post('/patientOfDoctor', [MainController::class, 'postPatientOfDoctor']);
+
 
 Route::get('/caregiverHome', [MainController::class, 'getCaregiverHome']);
 Route::post('/caregiverHome', [MainController::class, 'postCaregiverHome']);
