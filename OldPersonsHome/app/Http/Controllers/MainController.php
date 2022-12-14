@@ -934,18 +934,35 @@ public function postPatients(Request $request){
         }
     }
 
-    public function getPatientOfDoctor(){
+    public function getPatientOfDoctor(Request $request){
         $did = $_SESSION['user1'][0]['ID'];
         
+ 
+        return view('patientOfDoctor');
+    }
+
+    public function postPatientOfDoctor(Request $request){
+        $did = $_SESSION['user1'][0]['ID'];
+        $comment = $request->input('comment');
+        $morningMed = $request->input('morningMed');
+        $afternoonMed = $request->input('afternoonMed');
+        $nightMed = $request->input('nightMed');
+        $pid = $request->input('pid');
         
-        // $test = json_decode(json_encode($test), true);
+        DB::table('appointments')
+        ->updateOrInsert(
+            ['date'=> date('Y-m-d'), 'patientID' => $pid, 'doctorID' => $did],
+            ['comment' => $comment]
+        );
         
-        // SELECT DISTINCT a.date, a.comment, a.doctorID, p.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight FROM appointments a join patient p on a.doctorID = p.doctorID and a.patientID = p.patientID where a.doctorID = 43;
-        //$test = DB::table('appointments')->join('patient', 'appointments.doctorID', '=', 'patient.doctorID', 'appointments.patientID', '=', 'patient.patientID')->distinct()->select('appointments.date', 'appointments.comment', 'appointments.doctorID', 'patient.patientID', 'patient.medNameMorning', 'patient.medNameAfternoon', 'patient.medNameNight')->where('appointments.doctorID', '=', $did)->get();
-        //SELECT DISTINCT a.date, a.comment, a.doctorID, p.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight FROM appointments a join patient p on a.doctorID = p.doctorID where a.doctorID = 43 and a.patientID = 48 and p.patientID = 48;
+        DB::table('patient')->updateOrInsert(
+            ['doctorID' => $did, 'patientID' => $pid],
+            ['medNameMorning'=> $morningMed, 'medNameAfternoon'=> $afternoonMed, 'medNameNight'=> $nightMed ]
+        );
         
         return view('patientOfDoctor');
     }
+    
 
     public function getCaregiverHome(){
         // get all the patients for the group that the caregiver is working for that day
