@@ -5,6 +5,7 @@
             <header class="header">
 
             </header>
+            <br>
         </head>
         <body>
             <div class="main">
@@ -14,14 +15,12 @@
                             <th>Roles</th>
                             <th>Access Level</th>
                         </tr>
+                        @foreach ($levels as $level)
                         <tr>
-                            <td class="tableAccessLevel" >Doctor</td>
-                            <td class="tableAccessLevel" >1</td>
+                            <td class="tableAccessLevel" >{{ $level->role }}</td>
+                            <td class="tableAccessLevel" >{{ $level->level }}</td>
                         </tr>
-                        <tr>
-                            <td class="tableAccessLevel" >Caregiver</td>
-                            <td class="tableAccessLevel" >2</td>
-                        </tr>
+                        @endforeach
                     </table>
                 </div>
                 <div class="roleButtonsDiv">
@@ -32,38 +31,59 @@
                         Access Level
                     </button> -->
                     <div class="roleButtons">
-                        <label for="rolesID">Choose a Role:</label>
-                            <select id="rolesID" name="rolesID" style="width:125px">
-                                <option value="volvo">Doctor</option>
-                                <option value="saab">Caregiver</option>
-                                <option value="fiat">Supervisor</option>
-                                <option value="audi">Admin</option>
-                                <option value="audi">Patient</option>
-                                <option value="audi">Family Member</option>
+                        <form action="/roles" method="post">
+                        <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                        {{--<label for="roles">Choose a Role:</label>
+                         
+                            <select  name="roleID" style="width:125px">
+                                <option value=""disabled selected>Select a Role:</option>
+                                @foreach ($rolesDropdown as $roles)
+                                <option value={{ $roles->roleID }}>{{ $roles->role }}</option>
+                                @endforeach
                             </select>
+                            
                     </div>
                     <div class="roleButtons">
                         <label style="margin-top:15px;">Access Level: </label>
-                        <input id="accessID" style="width:125px; margin-left:6px; margin-top:15px;" >
+                        <input name="level" style="width:125px; margin-left:6px; margin-top:15px;" >
                     </div>
                 </div>
                 <div class="roleButtonsDiv">
                     <div class="roleButtons2">
-                        <button class="buttonStyle">Ok</button>
+                        <input type="submit" value="Submit">
+                    </div> --}}
+                    <br>
+                    <div class="roleButtons">
+                        <label style="margin-top:15px;">RoleID: </label>
+                        <input name="roleID" style="width:125px; margin-left:6px; margin-top:15px;" >
                     </div>
-                    <div class="roleButtons2">
+                        <div>
+                        <label style="margin-top:15px;">New Role: </label>
+                        <input name="newRole" style="width:125px; margin-left:6px; margin-top:15px;" >
+                    </div>
+                    <div class="roleButtons">
+                        <label style="margin-top:15px;">Access Level: </label>
+                        <input name="level" style="width:125px; margin-left:6px; margin-top:15px;" >
+                    </div>
+                    {{-- <div class="roleButtons2">
                         <button class="buttonStyle" style="margin-top:10px;" >Cancel?</button>
+                    </div> --}}
+                    <div class="roleButtons2">
+                        <input type="submit" value="Submit">
                     </div>
                 </div>
-                <div>
+            </form>
+                {{-- <div>
                     <script>
                         function goBack() {
                           window.history.back();
                         }
                         </script>
                     <button onclick="goBack()">Go Back</button>
-                </div>
+                </div> --}}
             </div>
+            <br>
+            <br>
             <footer class="footer">
 
             </footer>
