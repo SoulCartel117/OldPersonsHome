@@ -1311,7 +1311,7 @@ public function addRole(Request $request){
     DB::table('accesslevel')->updateOrInsert(
         ['roleID' => $request->input('roleID')],
         ['level' => $request->input('level')]);
-        
+
      $newRoles = DB::table('roles')
         ->get();
         // dd($newRoles);
