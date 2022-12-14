@@ -59,6 +59,8 @@ Route::get('/registration', [MainController::class, 'getRegistration']);
 Route::post('/registration', [MainController::class, 'registration']);
 
 Route::get('/roles', [MainController::class, 'getRoles']);
+// Route::post('/roles', [MainController::class, 'accesslevel']);
+Route::post('/roles', [MainController::class, 'addRole']);
 
 Route::get('/login', [MainController::class, 'getLogin']);
 Route::post('/login', [MainController::class, 'LoginPost']);

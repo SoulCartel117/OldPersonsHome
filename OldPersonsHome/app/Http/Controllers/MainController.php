@@ -188,7 +188,7 @@ class MainController extends Controller
         }
         
         //initialize caregiver
-        $caregiver;
+        $caregiver = "";
         // get caregiver to insert into appt table
         if ($groupID == 1){
             // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
@@ -749,7 +749,7 @@ public function postPatients(Request $request){
         // date is button
         $date = $request->input("searchByDate");
         // initialize $frmDateReg to assign value later
-        $frmDateReg;
+        $frmDateReg ="";
         if($date != null){
             $frmDateReg = $request->input('frmDateReg');
         }else{
@@ -1227,7 +1227,15 @@ public function postPatients(Request $request){
     }
 
     public function getRoles(){
-        return view('roles');
+        $newRoles = DB::table('roles')
+        ->get();
+        // dd($newRoles);
+        $accesslevel = DB::table('accesslevel')
+        ->join('roles', 'roles.roleID', '=', 'accesslevel.roleID')
+        ->select('roles.role', 'accesslevel.level')
+        ->get();
+        // dd($accesslevel);
+        return view('roles', ['levels'=>$accesslevel, 'rolesDropdown'=>$newRoles]);
     }
 
     public function adminIndex(){
@@ -1286,5 +1294,34 @@ public function postPatients(Request $request){
 }
 
 
+// public function accessLevel(Request $request){
+
+//     DB::table('accesslevel')->updateOrInsert(
+//         ['roleID' => $request->input('roleID')],
+//         ['level' => $request->input('level')]);
+
+//         return redirect('/roles');
+// }
+
+public function addRole(Request $request){
+    DB::table('roles')->updateOrInsert(
+        ['roleID' => $request->input('roleID')],
+        ['role' => $request->input('newRole')]);
+
+    DB::table('accesslevel')->updateOrInsert(
+        ['roleID' => $request->input('roleID')],
+        ['level' => $request->input('level')]);
+
+     $newRoles = DB::table('roles')
+        ->get();
+        // dd($newRoles);
+        $accesslevel = DB::table('accesslevel')
+        ->join('roles', 'roles.roleID', '=', 'accesslevel.roleID')
+        ->select('roles.role', 'accesslevel.level')
+        ->get();
+        // dd($accesslevel);
+        return view('roles', ['levels'=>$accesslevel, 'rolesDropdown'=>$newRoles]);
 }
 
+
+}
