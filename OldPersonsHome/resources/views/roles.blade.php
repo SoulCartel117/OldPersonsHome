@@ -72,15 +72,14 @@
                         <input type="submit" value="Submit">
                     </div>
                 </div>
-            </form>
-                {{-- <div>
+                <div>
                     <script>
                         function goBack() {
                           window.history.back();
                         }
                         </script>
                     <button onclick="goBack()">Go Back</button>
-                </div> --}}
+                </div>
             </div>
             <br>
             <br>
