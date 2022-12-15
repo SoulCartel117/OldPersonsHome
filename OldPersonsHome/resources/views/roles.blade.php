@@ -2,8 +2,8 @@
     <html>
         <head>
             <link rel="stylesheet" href="rolesStylesheet.css">
-            <header class="header">
-
+            <header class="header" style="display: flex; justify-content:center;">
+                <h1>Roles</h1>
             </header>
             <br>
         </head>
