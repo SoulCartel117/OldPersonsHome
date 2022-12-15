@@ -113,10 +113,10 @@ class MainController extends Controller
             return redirect('/careIndex');
         }
         if($role == 5){
-            return redirect('/patientHome');
+            return redirect('/patientIndex');
         }
         if($role == 6){
-            return redirect('/familyMemberHome');
+            return redirect('/famIndex');
         }
         // return login page if nothing else
         return redirect('/login');
@@ -1284,7 +1284,7 @@ public function postPatients(Request $request){
             $pid = $request->input('pid');
 
             // add the medication fees, 3 meds once per day per month = 15 bucks
-            $runningTotal = $runningTotal = 15;
+            $runningTotal = $runningTotal + 15;
 
             // update or insert calcuated information
             DB::table('patient')->updateOrInsert(
@@ -1356,11 +1356,11 @@ public function postPatients(Request $request){
     }
 
     public function patientIndex(){
-        return view('patientHome');
+        return view('patientIndex');
     }
 
     public function famIndex(){
-        return view('familyMemberHome');
+        return view('famIndex');
     }
 
     // Redirect to correct Home Page based on Role
@@ -1382,10 +1382,10 @@ public function postPatients(Request $request){
             return redirect('/careIndex');
         }
         if($roleID == 5){
-            return redirect('/patientHome');
+            return redirect('/patientIndex');
         }
         if($roleID == 6){
-            return redirect('/familyMemberHome');
+            return redirect('/famIndex');
         }
         return redirect('/login');
 }
