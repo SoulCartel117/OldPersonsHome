@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="stylesheet.css">
 <link rel="stylesheet" href="careIndex.css">
         <header class="header">
             <h1>Caregiver's Page</h1>
