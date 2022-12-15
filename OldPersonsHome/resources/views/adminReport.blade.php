@@ -50,10 +50,13 @@
                 <td>{{$group1->FName}} {{$group1->LName}}</td>
                 
                 <?php 
-                    $doctors = DB::table('patient')
-                        ->join('accounts', 'accounts.ID', '=', 'patient.doctorID')
-                        ->get();
+                    $doctors = DB::table('roster')
+                            ->join('accounts', 'accounts.ID', '=', 'roster.doctorID')
+                            ->where('date', '=', date('Y-m-d'))
+                            ->get();
+                            
                     $doctors = json_decode(json_encode($doctors), true);
+                   
                     echo '<td>'.$doctors[0]['FName'].' '.$doctors[0]['LName'].'</td>';
 
 

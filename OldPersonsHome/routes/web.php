@@ -52,6 +52,8 @@ Route::post('/familyMemberHome', [MainController::class, 'postFamilyMemberHome']
 Route::get('/adminReport', [MainController::class, 'getAdminReport']);
 
 Route::get('/payment', [MainController::class, 'getPayment']);
+Route::post('/paymentUpdate', [MainController::class, 'getPaymentUpdate']);
+Route::post('/paymentPost', [MainController::class, 'paymentPost']);
 
 Route::get('/homepage', [MainController::class, 'getHomepage']);
 
@@ -59,6 +61,8 @@ Route::get('/registration', [MainController::class, 'getRegistration']);
 Route::post('/registration', [MainController::class, 'registration']);
 
 Route::get('/roles', [MainController::class, 'getRoles']);
+// Route::post('/roles', [MainController::class, 'accesslevel']);
+Route::post('/roles', [MainController::class, 'addRole']);
 
 Route::get('/login', [MainController::class, 'getLogin']);
 Route::post('/login', [MainController::class, 'LoginPost']);

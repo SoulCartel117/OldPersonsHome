@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use PhpParser\Node\Expr\FuncCall;
+use SebastianBergmann\CodeCoverage\Driver\Selector;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Contracts\Service\Attribute\Required;
 session_start();
 
@@ -188,7 +190,7 @@ class MainController extends Controller
         }
         
         //initialize caregiver
-        $caregiver;
+        $caregiver = "";
         // get caregiver to insert into appt table
         if ($groupID == 1){
             // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
@@ -214,6 +216,20 @@ class MainController extends Controller
             'comment' => $comment,
             'date' => $date
         ]);
+
+        // Get the user info
+        $User = DB::table('patient')
+            ->where('patientID', '=', $pid)->get();
+
+        // get running balance and add 50 bucks
+        $runningTotal =  $User[0]->runningBalance;
+        $runningTotal = $runningTotal + 50;
+
+        // update patients running total
+        DB::table('patient')
+        ->where('patientID', $pid)
+        ->update(['runningBalance' => $runningTotal]);
+
 
         return redirect('/doctorAppt');
     }
@@ -751,7 +767,7 @@ public function postPatients(Request $request){
         // date is button
         $date = $request->input("searchByDate");
         // initialize $frmDateReg to assign value later
-        $frmDateReg;
+        $frmDateReg ="";
         if($date != null){
             $frmDateReg = $request->input('frmDateReg');
         }else{
@@ -1221,15 +1237,106 @@ public function postPatients(Request $request){
     }
 
     public function getPayment(){
-        return view('payment');
+        $runningTotal = 0;
+        $pid = 0;
+        return view('payment',['runningTotals'=>$runningTotal, 'PIDs'=>$pid]);
     }
+
+    public function getPaymentUpdate(Request $request){
+        // check if patient has made payments
+        if (DB::table('balance')->where('patientID', $request->input('pid'))->exists()) {
+            //get running balance from accounts
+           $user = DB::table('accounts')
+                ->where('ID', '=', $request->input('pid'))
+                ->get();
+                
+            $pid = $user[0]->ID;
+
+            $Balance = DB::table('patient')
+            ->where('patientID', '=', $request->input('pid'))
+            ->get();
+            $runningTotal = $Balance[0]->runningBalance;
+
+            return view('payment',['runningTotals'=>$runningTotal, 'PIDs'=>$pid]);
+        }
+        else{
+            // get admission date
+            $admisDate = DB::table('patient')
+            ->where('patientID', '=', $request->input('pid'))
+            ->get();
+
+            // convert dates to useable format
+            $curDate = date('Y-m-d');
+            $startDate = strtotime($admisDate[0]->admissionDate);
+            $curDate = strtotime('now');
+
+            // get differance 
+            $diff = ($startDate - $curDate);
+            $diff =  abs($diff);
+            $diff = ($diff / 86400);
+            // round down 
+            $diff = floor($diff);
+            // mutiple times the daily fee
+            $runningTotal =  $diff * 10;
+            $runningTotal = strval($runningTotal);
+
+
+            $pid = $request->input('pid');
+
+            // add the medication fees, 3 meds once per day per month = 15 bucks
+            $runningTotal = $runningTotal = 15;
+
+            // update or insert calcuated information
+            DB::table('patient')->updateOrInsert(
+                ['patientID' => $pid],
+                ['runningBalance' => $runningTotal]);
+            
+            
+        }
+        
+        return view('payment',['runningTotals'=>($runningTotal), 'PIDs'=>$pid]);
+    }
+
+    public function paymentPost(Request $request){
+        // get needed information
+        $amountDue = $request->input('amountDue');
+        $payment = $request->input('paymentAmount');
+        $pid = $request->input('pid');
+        $closing = $amountDue - $payment;
+
+        // send information
+        DB::table('balance')->insert([
+            'patientID' => $pid,
+            'openingBalance' => $amountDue,
+            'paymentAmt' => $payment,
+            'closingBalance' => $closing,
+            'date' => date('Y-m-d')
+        ]);
+
+        DB::table('patient')
+        ->where('patientID', $pid)
+        ->update(['runningBalance' => $closing]);
+
+        $runningTotal = $closing;
+
+        return view('payment',['runningTotals'=>($runningTotal), 'PIDs'=>$pid]);
+    }
+
 
     public function getHomepage(){
         return view('homepage');
     }
 
     public function getRoles(){
-        return view('roles');
+        $newRoles = DB::table('roles')
+        ->get();
+        // dd($newRoles);
+        $accesslevel = DB::table('accesslevel')
+        ->join('roles', 'roles.roleID', '=', 'accesslevel.roleID')
+        ->select('roles.role', 'accesslevel.level')
+        ->get();
+        // dd($accesslevel);
+        return view('roles', ['levels'=>$accesslevel, 'rolesDropdown'=>$newRoles]);
     }
 
     public function adminIndex(){
@@ -1283,5 +1390,36 @@ public function postPatients(Request $request){
         return redirect('/login');
 }
 
+
+// public function accessLevel(Request $request){
+
+//     DB::table('accesslevel')->updateOrInsert(
+//         ['roleID' => $request->input('roleID')],
+//         ['level' => $request->input('level')]);
+
+//         return redirect('/roles');
+// }
+
+public function addRole(Request $request){
+    DB::table('roles')->updateOrInsert(
+        ['roleID' => $request->input('roleID')],
+        ['role' => $request->input('newRole')]);
+
+    DB::table('accesslevel')->updateOrInsert(
+        ['roleID' => $request->input('roleID')],
+        ['level' => $request->input('level')]);
+
+     $newRoles = DB::table('roles')
+        ->get();
+        // dd($newRoles);
+        $accesslevel = DB::table('accesslevel')
+        ->join('roles', 'roles.roleID', '=', 'accesslevel.roleID')
+        ->select('roles.role', 'accesslevel.level')
+        ->get();
+        // dd($accesslevel);
+        return view('roles', ['levels'=>$accesslevel, 'rolesDropdown'=>$newRoles]);
+
 }
 
+
+}
