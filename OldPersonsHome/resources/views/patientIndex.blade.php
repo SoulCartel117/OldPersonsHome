@@ -11,7 +11,7 @@
         <div class="main">
             <div>
             <br>
-            <form action="" method="POST">
+            <form action="" method="GET">
     
                 <div class="flex-container">
                     <div><a href="/patientHome">Patient's Home</a></div>
@@ -24,8 +24,10 @@
             </form>
             </div>
         </div>
-        <footer class="footer">
-
-            </footer>
+        <div class="flex-containerbtn">
+            <form action="/login">
+                <input type="submit" value="LOGOUT">
+            </form>
+        </div>
         </body>
         </html>
