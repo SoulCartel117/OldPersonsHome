@@ -23,7 +23,7 @@
                         @endforeach
                     </table>
                 </div>
-                <div class="roleButtonsDiv">
+                <div style="margin-top:20px;" class="roleButtonsDiv">
                     <!-- <button class="roleButtons">
                         Role
                     </button>
@@ -53,11 +53,12 @@
                         <input type="submit" value="Submit">
                     </div> --}}
                     <br>
-                    <div class="roleButtons">
+                <div style="margin-top: 20px;">
+                    <div class="roleButtons" style="margin-top: 30px;">
                         <label style="margin-top:15px;">RoleID: </label>
                         <input name="roleID" style="width:125px; margin-left:6px; margin-top:15px;" >
                     </div>
-                        <div>
+                    <div class="roleButtons">
                         <label style="margin-top:15px;">New Role: </label>
                         <input name="newRole" style="width:125px; margin-left:6px; margin-top:15px;" >
                     </div>
@@ -71,20 +72,17 @@
                     <div class="roleButtons2">
                         <input type="submit" value="Submit">
                     </div>
-                </div>
-                <div>
-                    <script>
-                        function goBack() {
-                          window.history.back();
-                        }
-                        </script>
-                    <button onclick="goBack()">Go Back</button>
-                </div>
+                </form>
+                </div>   
+                
             </div>
             <br>
             <br>
-            <footer class="footer">
-
-            </footer>
+            <div>
+                <form action="goBack" method="post">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <input type="submit" value="Homepage">
+                </form>
+            </div>
         </body>
     </html>
