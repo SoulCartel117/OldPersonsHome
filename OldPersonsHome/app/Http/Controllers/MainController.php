@@ -206,6 +206,8 @@ class MainController extends Controller
         //$caregiver = json_decode(json_encode($caregiver), true);
         $comment = $request->input("cid");
 
+        
+
         DB::table('appointments')->insert([
             'supervisorID' => $supervisorID[0]->supervisorID,
             'doctorID' => $doctorID[0]->doctorID,
@@ -1361,10 +1363,6 @@ public function postPatients(Request $request){
         return view('familyMemberHome');
     }
 
-   
-
-
-
     // Redirect to correct Home Page based on Role
     public function goBack() {
         // get account role ID
@@ -1420,6 +1418,7 @@ public function addRole(Request $request){
         ->get();
         // dd($accesslevel);
         return view('roles', ['levels'=>$accesslevel, 'rolesDropdown'=>$newRoles]);
+
 }
 
 

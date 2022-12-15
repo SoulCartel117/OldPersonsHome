@@ -20,6 +20,7 @@
                 <br>
                 <div class="flex-container">
                     <div><a href="/patients">All Patients</a></div>
+                    <div><a href="/roster">Roster</a></div>
                 </div>
                 <br>
                 <div class="flex-containerbtn">
