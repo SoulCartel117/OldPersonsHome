@@ -9,12 +9,11 @@
 .header{
     width: 100%;
     height: 150px;
-    border: 2px solid black;
+    border: 2px solid #2196F3;
 }
 .footer{
     width: 100%;
     height: 150px;
-    border: 2px solid red;
 }
 .main{
     height: 650px;
@@ -50,7 +49,7 @@
 
 a {
   padding: 0%;
-  background-color: #f44336;
+  background-color: #2196F3;
   border: black 2px;
 }
 
@@ -80,7 +79,7 @@ button:hover {
 .cancelbtn {
   width: auto;
   padding: 10px 18px;
-  background-color: #f44336;
+  background-color: #2196F3;
   cursor: pointer;
 }
 
@@ -101,7 +100,7 @@ h1{
 <head>
 <link rel="stylesheet" href="stylesheet.css">
         <header class="header">
-
+            <h1>Old Persons' Home</h1>
         </header>
     </head>
     <body>
@@ -124,7 +123,7 @@ h1{
                 <br>
                 <div class="flex-containerbtn">
                     <div>
-                      <a href="/registration">Register
+                      <a class="cancelbtn" style="border: 2px solid black;" href="/registration">Register</a>
                     </div>
                     <div>
                       <input type="submit" value="Login" class="cancelbtn" name="Login">
