@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use PhpParser\Node\Expr\FuncCall;
+use SebastianBergmann\CodeCoverage\Driver\Selector;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Contracts\Service\Attribute\Required;
 session_start();
 
@@ -188,7 +190,7 @@ class MainController extends Controller
         }
         
         //initialize caregiver
-        $caregiver;
+        $caregiver = "";
         // get caregiver to insert into appt table
         if ($groupID == 1){
             // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
@@ -749,7 +751,7 @@ public function postPatients(Request $request){
         // date is button
         $date = $request->input("searchByDate");
         // initialize $frmDateReg to assign value later
-        $frmDateReg;
+        $frmDateReg ="";
         if($date != null){
             $frmDateReg = $request->input('frmDateReg');
         }else{
@@ -884,7 +886,7 @@ public function postPatients(Request $request){
         $searchText = $request->input('searchText');
 
         if($search == 1){
-            $FName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.FName', '=', $searchText)->get();
+            $FName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.FName', '=', $searchText)->groupBy('comment')->get();
             $FName = json_decode(json_encode($FName), true);
 
             if(isset($date)){
@@ -896,7 +898,7 @@ public function postPatients(Request $request){
             }
 
         } elseif($search == 2){
-            $LName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.LName', '=', $searchText)->get();
+            $LName = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('accounts.LName', '=', $searchText)->groupBy('comment')->get();
             $LName = json_decode(json_encode($LName), true);
 
             if(isset($date)){
@@ -908,7 +910,7 @@ public function postPatients(Request $request){
             } 
 
         }elseif($search == 3){
-            $comment = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('appointments.comment', 'like', '%'.$searchText.'%')->get();
+            $comment = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->where('appointments.comment', 'like', '%'.$searchText.'%')->groupBy('comment')->get();
             $comment = json_decode(json_encode($comment), true);
 
             if(isset($date)){
@@ -921,7 +923,7 @@ public function postPatients(Request $request){
 
         } else {
             //SELECT DISTINCT a.patientID, a.comment, a.date, aa.FName, aa.LName, m.morningMed, m.afternoonMed, m.nightMed FROM accounts aa join appointments a on a.patientID=aa.ID join medicationtaken m on a.date = m.date where a.doctorID = 43;
-            $oldAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->get();
+            $oldAppts = DB::table('appointments')->join('accounts', 'appointments.patientID', '=', 'accounts.ID')->join('medicationTaken', 'appointments.date', '=', 'medicationTaken.date')->distinct()->select('appointments.patientID', 'appointments.comment', 'appointments.date', 'accounts.FName', 'accounts.LName', 'medicationtaken.morningMed', 'medicationtaken.afternoonMed', 'medicationtaken.nightMed')->where('appointments.doctorID', '=', $did)->where('appointments.date', '<', date("Y-m-d"))->groupBy('comment')->get();
             $oldAppts = json_decode(json_encode($oldAppts), true);
 
             if(isset($date)){
@@ -936,7 +938,7 @@ public function postPatients(Request $request){
 
     public function getPatientOfDoctor(Request $request){
         $did = $_SESSION['user1'][0]['ID'];
-        
+
  
         return view('patientOfDoctor');
     }
@@ -1219,15 +1221,96 @@ public function postPatients(Request $request){
     }
 
     public function getPayment(){
-        return view('payment');
+        $runningTotal = 0;
+        $pid = 0;
+        return view('payment',['runningTotals'=>$runningTotal, 'PIDs'=>$pid]);
     }
+
+    public function getPaymentUpdate(Request $request){
+        // check if patient has made payments
+        if (DB::table('accounts')->where('ID', $request->input('pid'))->exists()) {
+            //get running balance from accounts
+           $user = DB::table('accounts')
+                ->where('ID', '=', $request->input('pid'))
+                ->get();
+                
+            $pid = $user[0]->ID;
+
+            $Balance = DB::table('patient')
+            ->where('patientID', '=', $request->input('pid'))
+            ->get();
+            $runningTotal = $Balance[0]->runningBalance;
+
+            return view('payment',['runningTotals'=>$runningTotal, 'PIDs'=>$pid]);
+        }
+        else{
+            // get admission date
+            $admisDate = DB::table('patient')
+            ->where('patientID', '=', $request->input('pid'))
+            ->get();
+            // convert dates to useable format
+            $curDate = date('Y-m-d');
+            $startDate = strtotime($admisDate[0]->admissionDate);
+            $curDate = strtotime('now');
+            // get differance
+            $diff = ($startDate - $curDate);
+            $diff =  abs($diff);
+            $diff = ($diff / 86400);
+            
+            $diff = floor($diff);
+            $runningTotal =  $diff * 10;
+            $runningTotal = strval($runningTotal);
+
+            $pid = $request->input('pid');
+            // update or insert calcuated information
+            DB::table('patient')->updateOrInsert(
+                ['patientID' => $pid],
+                ['runningBalance' => $runningTotal]);
+            
+        }
+        
+        return view('payment',['runningTotals'=>($runningTotal), 'PIDs'=>$pid]);
+    }
+
+    public function paymentPost(Request $request){
+        // get needed information
+        $amountDue = $request->input('amountDue');
+        $payment = $request->input('paymentAmount');
+        $pid = $request->input('pid');
+        $closing = $amountDue - $payment;
+        // send information
+        DB::table('balance')->insert([
+            'patientID' => $pid,
+            'openingBalance' => $amountDue,
+            'paymentAmt' => $payment,
+            'closingBalance' => $closing,
+            'date' => date('Y-m-d')
+        ]);
+
+        DB::table('accounts')->updateOrInsert([
+            'runningBalance'=>$closing
+        ]);
+
+        $runningTotal = $closing;
+
+        return view('payment',['runningTotals'=>($runningTotal), 'PIDs'=>$pid]);
+    }
+
 
     public function getHomepage(){
         return view('homepage');
     }
 
     public function getRoles(){
-        return view('roles');
+        $newRoles = DB::table('roles')
+        ->get();
+        // dd($newRoles);
+        $accesslevel = DB::table('accesslevel')
+        ->join('roles', 'roles.roleID', '=', 'accesslevel.roleID')
+        ->select('roles.role', 'accesslevel.level')
+        ->get();
+        // dd($accesslevel);
+        return view('roles', ['levels'=>$accesslevel, 'rolesDropdown'=>$newRoles]);
     }
 
     public function adminIndex(){
@@ -1286,5 +1369,34 @@ public function postPatients(Request $request){
 }
 
 
+// public function accessLevel(Request $request){
+
+//     DB::table('accesslevel')->updateOrInsert(
+//         ['roleID' => $request->input('roleID')],
+//         ['level' => $request->input('level')]);
+
+//         return redirect('/roles');
+// }
+
+public function addRole(Request $request){
+    DB::table('roles')->updateOrInsert(
+        ['roleID' => $request->input('roleID')],
+        ['role' => $request->input('newRole')]);
+
+    DB::table('accesslevel')->updateOrInsert(
+        ['roleID' => $request->input('roleID')],
+        ['level' => $request->input('level')]);
+
+     $newRoles = DB::table('roles')
+        ->get();
+        // dd($newRoles);
+        $accesslevel = DB::table('accesslevel')
+        ->join('roles', 'roles.roleID', '=', 'accesslevel.roleID')
+        ->select('roles.role', 'accesslevel.level')
+        ->get();
+        // dd($accesslevel);
+        return view('roles', ['levels'=>$accesslevel, 'rolesDropdown'=>$newRoles]);
 }
 
+
+}
