@@ -11,23 +11,20 @@
         <div class="main">
             <div>
             <br>
-            <form action="" method="POST">
+            <form action="" method="GET">
     
                 <div class="flex-container">
                     <div><a href="/familyMemberHome">Family Member's Home</a></div>
                     <div><a href="/roster">Roster</a></div>
                 </div>
-                <br>
-                <div>
-                    <div class="flex-containerbtn">
-                        <button type="button" value="Logout"><a href="login">Logout</a>
-                    </div>
-                </div>
             </form>
             </div>
         </div>
-        <footer class="footer">
-
-            </footer>
+        <div>
+            <form action="/login" method="post">
+                <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                <input type="submit" value="LOGOUT">
+            </form>
+        </div>
         </body>
         </html>
