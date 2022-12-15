@@ -3,8 +3,8 @@
         <head>
             {{-- <link rel="stylesheet" href="RegStyleSheet.css"> --}}
             <link rel="stylesheet" href="{{ asset('RegStyleSheet.css') }}">
-            <header class="header">
-
+            <header class="header" style="display: flex; justify-content:center">
+                <h1>Registration</h1>
             </header>
         </head>
         <body>
