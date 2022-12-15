@@ -1073,8 +1073,8 @@ public function postPatients(Request $request){
             return view('caregiverHome', ['Group1'=>$Group1]);
 
         }
-        
-        return view('caregiverHome');
+
+        return 'You are not working today';
     }
 
     public function postCaregiverHome(Request $request){
