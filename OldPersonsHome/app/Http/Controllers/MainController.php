@@ -215,6 +215,20 @@ class MainController extends Controller
             'date' => $date
         ]);
 
+        // Get the user info
+        $User = DB::table('patient')
+            ->where('patientID', '=', $pid)->get();
+
+        // get running balance and add 50 bucks
+        $runningTotal =  $User[0]->runningBalance;
+        $runningTotal = $runningTotal + 50;
+
+        // update patients running total
+        DB::table('patient')
+        ->where('patientID', $pid)
+        ->update(['runningBalance' => $runningTotal]);
+
+
         return redirect('/doctorAppt');
     }
 
@@ -1228,7 +1242,7 @@ public function postPatients(Request $request){
 
     public function getPaymentUpdate(Request $request){
         // check if patient has made payments
-        if (DB::table('accounts')->where('ID', $request->input('pid'))->exists()) {
+        if (DB::table('balance')->where('patientID', $request->input('pid'))->exists()) {
             //get running balance from accounts
            $user = DB::table('accounts')
                 ->where('ID', '=', $request->input('pid'))
@@ -1248,24 +1262,33 @@ public function postPatients(Request $request){
             $admisDate = DB::table('patient')
             ->where('patientID', '=', $request->input('pid'))
             ->get();
+
             // convert dates to useable format
             $curDate = date('Y-m-d');
             $startDate = strtotime($admisDate[0]->admissionDate);
             $curDate = strtotime('now');
-            // get differance
+
+            // get differance 
             $diff = ($startDate - $curDate);
             $diff =  abs($diff);
             $diff = ($diff / 86400);
-            
+            // round down 
             $diff = floor($diff);
+            // mutiple times the daily fee
             $runningTotal =  $diff * 10;
             $runningTotal = strval($runningTotal);
 
+
             $pid = $request->input('pid');
+
+            // add the medication fees, 3 meds once per day per month = 15 bucks
+            $runningTotal = $runningTotal = 15;
+
             // update or insert calcuated information
             DB::table('patient')->updateOrInsert(
                 ['patientID' => $pid],
                 ['runningBalance' => $runningTotal]);
+            
             
         }
         
@@ -1278,6 +1301,7 @@ public function postPatients(Request $request){
         $payment = $request->input('paymentAmount');
         $pid = $request->input('pid');
         $closing = $amountDue - $payment;
+
         // send information
         DB::table('balance')->insert([
             'patientID' => $pid,
@@ -1287,9 +1311,9 @@ public function postPatients(Request $request){
             'date' => date('Y-m-d')
         ]);
 
-        DB::table('accounts')->updateOrInsert([
-            'runningBalance'=>$closing
-        ]);
+        DB::table('patient')
+        ->where('patientID', $pid)
+        ->update(['runningBalance' => $closing]);
 
         $runningTotal = $closing;
 
