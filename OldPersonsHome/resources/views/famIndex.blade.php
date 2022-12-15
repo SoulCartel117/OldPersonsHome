@@ -2,9 +2,9 @@
 <html>
 <head>
 <link rel="stylesheet" href="stylesheet.css">
-<link rel="stylesheet" href="careIndex.css">
+<link rel="stylesheet" href="patientIndex.css">
         <header class="header">
-            <h1>Caregiver's Page</h1>
+            <h1>Family Member's Page</h1>
         </header>
     </head>
     <body>
@@ -14,12 +14,14 @@
             <form action="" method="POST">
     
                 <div class="flex-container">
-                    <div><a href="/caregiverHome">Caregiver's Home</a></div>
-                    <div><a href="/roster">All Patients</a></div>
+                    <div><a href="/familyMemberHome">Family Member's Home</a></div>
+                    <div><a href="/roster">Roster</a></div>
                 </div>
                 <br>
-                <div class="flex-containerbtn">
-                    <div><button type="button" class="cancelbtn" name="Logout"><a href="/login"</a>Logout</div>
+                <div>
+                    <div class="flex-containerbtn">
+                        <button type="button" value="Logout"><a href="login">Logout</a>
+                    </div>
                 </div>
             </form>
             </div>
