@@ -14,7 +14,7 @@
         <div class="leftDiv">
             <form action="/paymentUpdate" method="post">
                 <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-                <label for="pid">Patient ID</label>
+                <label style="margin-bottom: 15px;" for="pid">Patient ID</label>
                 <input type="text" id="pid" name="pid"><br><br>
                 <div class="buttonDiv">
                     <input type="submit" value="Update">
@@ -28,7 +28,7 @@
                 <input name="amountDue" type="text" value="{{($runningTotals)}}" hidden>
                 <input name="pid" type="text" value="{{($PIDs)}}" hidden>
                 <label for="did">New Payment</label>
-                <input type="number" name="paymentAmount" id="paymentAmount"><br><br>
+                <input style="margin-top: 15px;" type="number" name="paymentAmount" id="paymentAmount"><br><br>
 
                 <div class="buttonDiv">
                     <input type="submit" value="Okay">
