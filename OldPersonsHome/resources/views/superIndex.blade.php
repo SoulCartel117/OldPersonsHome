@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="stylesheet.css">
 <link rel="stylesheet" href="superIndex.css">
         <header class="header">
             <h1>Supervisor's Page</h1>
@@ -15,7 +14,7 @@
     
                 <div class="flex-container">
                     <div><a href="/adminReport">Admin's Report</a></div>
-                    <div><a href="/regisApproval">Regristration Approval</a></div>
+                    <div><a href="/regisApproval">Registration Approval</a></div>
                 </div>
                 <br>
                 <div class="flex-container">
