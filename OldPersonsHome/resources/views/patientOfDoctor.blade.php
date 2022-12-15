@@ -15,10 +15,9 @@ use Illuminate\Support\Facades\DB;
 
     $date1 = date("y-m-d");
 
-    $test = DB::select("select a.appointmentID, a.comment, a.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight, a.date FROM patient p join appointments a on a.doctorID = p.doctorID where a.doctorID = $did group by a.appointmentID order by date asc;");
+    $test = DB::select("select a.appointmentID, a.comment, a.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight, a.date FROM patient p join appointments a on a.patientID = p.patientID where a.doctorID = $did group by a.appointmentID order by date asc;");
     // select * from (SELECT doctorID, patientID, comment, date FROM `appointments` where patientID = 48 and doctorID = 43) a join (SELECT patientID, doctorID, medNameMorning, medNameAfternoon, medNameNight FROM `patient` where doctorID = 43 and patientID = 48) b on a.doctorID=b.doctorID where date = '2022-12-07';
     $test = json_decode(json_encode($test), true);
-
 
     $test1 = DB::select("select a.appointmentID, a.comment, a.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight, a.date FROM patient p join appointments a on a.doctorID = p.doctorID where a.doctorID = $did and date = $date1 group by a.appointmentID order by date asc;");
     $test1 = json_decode(json_encode($test1), true);
