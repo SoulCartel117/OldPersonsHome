@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="stylesheet.css">
 <link rel="stylesheet" href="patientIndex.css">
         <header class="header">
-            <h1>Patient's Page</h1>
+            <h1>Family Member's Page</h1>
         </header>
     </head>
     <body>
@@ -14,18 +14,15 @@
             <form action="" method="GET">
     
                 <div class="flex-container">
-                    <div><a href="/patientHome">Patient's Home</a></div>
+                    <div><a href="/familyMemberHome">Family Member's Home</a></div>
                     <div><a href="/roster">Roster</a></div>
-                </div>
-                <br>
-                <div>
-                    
                 </div>
             </form>
             </div>
         </div>
-        <div class="flex-containerbtn">
-            <form action="/login">
+        <div>
+            <form action="/login" method="post">
+                <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <input type="submit" value="LOGOUT">
             </form>
         </div>

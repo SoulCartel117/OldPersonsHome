@@ -14,17 +14,18 @@
     
                 <div class="flex-container">
                     <div><a href="/caregiverHome">Caregiver's Home</a></div>
+                    <div><a href="/roster">Roster</a></div>
                     <div><a href="/patients">All Patients</a></div>
                 </div>
                 <br>
-                <div class="flex-containerbtn">
-                    <div><button type="button" class="cancelbtn" name="Logout"><a href="/login"</a>Logout</div>
-                </div>
             </form>
             </div>
         </div>
-        <footer class="footer">
-
-            </footer>
+<div>
+        <form action="/login" method="post">
+            <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+            <input type="submit" value="LOGOUT">
+        </form>
+    </div>
         </body>
         </html>
