@@ -83,7 +83,6 @@
 
                     <div class="buttonDiv">
                         <input type="submit" value="Submit">
-                        <input type="submit" value="Cancel">
                     </div>
                 </form>
             </div>

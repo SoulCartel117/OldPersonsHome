@@ -71,7 +71,7 @@
             ?>
                 
             <?php 
-                if(!isset($caregiver)){
+                if(empty($caregiver)){
                     echo "<td></td>";
                 }else{
                     echo "<td>".$caregiver[0]['FName']." ".$caregiver[0]['LName']."</td>"; 
@@ -79,7 +79,7 @@
             ?>
 
             <?php 
-                if(!isset($medicationTaken)){
+                if(empty($medicationTaken)){
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                 }elseif($medicationTaken[0]['morningMed'] == 1){
                     echo "<td class='checked'>
@@ -91,7 +91,7 @@
             ?>
 
             <?php 
-                if(!isset($medicationTaken)){
+                if(empty($medicationTaken)){
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                 }elseif($medicationTaken[0]['nightMed'] == 1){
                     echo "<td class='checked'>
@@ -103,7 +103,7 @@
             ?>
 
             <?php 
-                if(!isset($medicationTaken)){
+                if(empty($medicationTaken)){
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                 }elseif($medicationTaken[0]['nightMed'] == 1){
                     echo "<td class='checked'>
@@ -115,7 +115,7 @@
             ?>
 
             <?php 
-                if(!isset($meals)){
+                if(empty($meals)){
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                 }elseif($meals[0]['breakfast'] == 1){
                     echo "<td class='checked'>
@@ -127,7 +127,7 @@
             ?>
 
             <?php 
-                if(!isset($meals)){
+                if(empty($meals)){
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                 }elseif($meals[0]['lunch'] == 1){
                     echo "<td class='checked'>
@@ -139,7 +139,7 @@
             ?>
 
             <?php 
-                if(!isset($meals)){
+                if(empty($meals)){
                     echo "<td class='unchecked'> <input id='checkbox-1' type='checkbox' disabled /> </td>";
                 }elseif($meals[0]['dinner'] == 1){
                     echo "<td class='checked'>

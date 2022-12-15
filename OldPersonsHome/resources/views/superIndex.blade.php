@@ -15,7 +15,7 @@
     
                 <div class="flex-container">
                     <div><a href="/adminReport">Admin's Report</a></div>
-                    <div><a href="/regisApproval">Regristration Approval</a></div>
+                    <div><a href="/regisApproval">Registration Approval</a></div>
                 </div>
                 <br>
                 <div class="flex-container">

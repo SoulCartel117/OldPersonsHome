@@ -81,7 +81,9 @@
 
             </div>
             <div>
-                <button onclick="history.go(-2);">Go Back</button>
+                <form action="/login">
+                    <input type="submit" value="Go Back">
+                </form>
             </div>
             <footer class="footer">
 
