@@ -10,8 +10,8 @@
         <body>
             <div class="main">
                 <div class="homepageLinks">
-                    <div><a class="loginLink" href="login.blade.php">Login</a></div>
-                    <div><a class="registerLink" href="registration.blade.php">Register</a></div>
+                    <div><a class="loginLink" href="/login">Login</a></div>
+                    <div><a class="registerLink" href="/registration">Register</a></div>
                 </div>
             </div>
             <footer class="footer">
