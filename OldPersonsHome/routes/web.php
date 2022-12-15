@@ -40,6 +40,8 @@ Route::post('/newRoster', [MainController::class, 'postNewRoster']);
 Route::get('/doctorHome', [MainController::class, 'getDoctorHome']);
 
 Route::get('/patientOfDoctor', [MainController::class, 'getPatientOfDoctor']);
+Route::post('/patientOfDoctor', [MainController::class, 'postPatientOfDoctor']);
+
 
 Route::get('/caregiverHome', [MainController::class, 'getCaregiverHome']);
 Route::post('/caregiverHome', [MainController::class, 'postCaregiverHome']);
@@ -59,6 +61,8 @@ Route::get('/registration', [MainController::class, 'getRegistration']);
 Route::post('/registration', [MainController::class, 'registration']);
 
 Route::get('/roles', [MainController::class, 'getRoles']);
+// Route::post('/roles', [MainController::class, 'accesslevel']);
+Route::post('/roles', [MainController::class, 'addRole']);
 
 Route::get('/login', [MainController::class, 'getLogin']);
 Route::post('/login', [MainController::class, 'LoginPost']);
