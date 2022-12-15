@@ -14,7 +14,8 @@
     
                 <div class="flex-container">
                     <div><a href="/caregiverHome">Caregiver's Home</a></div>
-                    <div><a href="/roster">All Patients</a></div>
+                    <div><a href="/roster">Roster</a></div>
+                    <div><a href="/patients">All Patients</a></div>
                 </div>
                 <br>
                 <div class="flex-containerbtn">
