@@ -1284,7 +1284,7 @@ public function postPatients(Request $request){
             $pid = $request->input('pid');
 
             // add the medication fees, 3 meds once per day per month = 15 bucks
-            $runningTotal = $runningTotal = 15;
+            $runningTotal = $runningTotal + 15;
 
             // update or insert calcuated information
             DB::table('patient')->updateOrInsert(
