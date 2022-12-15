@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
     // select * from (SELECT doctorID, patientID, comment, date FROM `appointments` where patientID = 48 and doctorID = 43) a join (SELECT patientID, doctorID, medNameMorning, medNameAfternoon, medNameNight FROM `patient` where doctorID = 43 and patientID = 48) b on a.doctorID=b.doctorID where date = '2022-12-07';
     $test = json_decode(json_encode($test), true);
 
-    $test1 = DB::select("select a.appointmentID, a.comment, a.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight, a.date FROM patient p join appointments a on a.doctorID = p.doctorID where a.doctorID = $did and date = $date1 group by a.appointmentID order by date asc;");
+    $test1 = DB::select("select a.appointmentID, a.comment, a.patientID, p.medNameMorning, p.medNameAfternoon, p.medNameNight, a.date FROM patient p join appointments a on a.patientID = p.patientID where a.doctorID = $did and date = $date1 group by a.appointmentID order by date asc;");
     $test1 = json_decode(json_encode($test1), true);
     
 ?>
@@ -103,11 +103,19 @@ use Illuminate\Support\Facades\DB;
             }
         }
 
-        var test1 = JSON.parse('<?php echo json_encode($test1) ?>');
+        var test1 = JSON.parse('<?php echo json_encode($test) ?>');
         const date = new Date().toJSON().slice(0, 10);
         console.log(test1);
         console.log(date);
-        if (typeof test1.date !== 'undefined'){
+            
+        
+        for (let i=0; i <= test1.length; i++){
+            if(test1[i][date] == date){
+                testDate = date;
+            }
+        }
+
+        if(testDate !== 0){
             document.getElementById("disabled").style.display = "block";
             console.log("block");
         } else{
