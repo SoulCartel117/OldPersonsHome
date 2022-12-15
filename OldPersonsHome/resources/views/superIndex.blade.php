@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="stylesheet.css">
 <link rel="stylesheet" href="superIndex.css">
         <header class="header">
             <h1>Supervisor's Page</h1>
