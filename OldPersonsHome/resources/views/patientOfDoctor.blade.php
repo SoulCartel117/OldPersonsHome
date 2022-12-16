@@ -66,8 +66,8 @@ use Illuminate\Support\Facades\DB;
                         <th>Afternoon Med</th>
                         <th>Night Med</th>
                     </tr>
-                    <div class="inputDiv" >
-                        <tr id="disabled">
+                    <div class="inputDiv">
+                        <tr>
                             <td><input type="text" name="comment"></td>
                             <td><input type="text" name="morningMed"></td>
                             <td><input type="text" name="afternoonMed"></td>
@@ -75,7 +75,7 @@ use Illuminate\Support\Facades\DB;
                         </tr>
                     </div>
                 </table><br><br>
-                <input type="submit" class="buttonDiv">
+                <input type="submit" class="buttonDiv" id="disabled">
         </form>
     </section>
 
@@ -106,15 +106,17 @@ use Illuminate\Support\Facades\DB;
         var test1 = JSON.parse('<?php echo json_encode($test) ?>');
         const date = new Date().toJSON().slice(0, 10);
         console.log(test1);
-        console.log(date);
             
-        
-        for (let i=0; i <= test1.length; i++){
-            if(test1[i][date] == date){
+        let testDate = 0;
+        for (let i=0; i < test1.length; i++){
+            if(test1[i].date == date){
+                console.log(test1[i].date);
                 testDate = date;
+                break;
             }
         }
-
+        // console.log(testDate);
+        console.log(date);
         if(testDate !== 0){
             document.getElementById("disabled").style.display = "block";
             console.log("block");
