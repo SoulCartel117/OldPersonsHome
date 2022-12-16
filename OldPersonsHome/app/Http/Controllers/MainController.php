@@ -190,7 +190,7 @@ class MainController extends Controller
         }
         
         //initialize caregiver
-        $caregiver = "";
+        $caregiver;
         // get caregiver to insert into appt table
         if ($groupID == 1){
             // select * from roster r join accounts a on r.group2=a.ID where date = '2022-12-05';
@@ -767,7 +767,7 @@ public function postPatients(Request $request){
         // date is button
         $date = $request->input("searchByDate");
         // initialize $frmDateReg to assign value later
-        $frmDateReg ="";
+        $frmDateReg;
         if($date != null){
             $frmDateReg = $request->input('frmDateReg');
         }else{
